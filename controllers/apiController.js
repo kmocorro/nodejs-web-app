@@ -3,6 +3,9 @@ var mysql = require('mysql');
 var moment = require('moment');
 var fs = require('fs');
 
+var TSV = require('tsv');
+
+
 module.exports = function(app){
 
     app.use(bodyParser.json());
@@ -13,11 +16,10 @@ module.exports = function(app){
     //  change this create a dbconfig later
     var pool = mysql.createPool({
         connectionLimit:    100, //try for now
-        multipleStatements: true,
-        host    :           '',
-        user    :           '',
-        password:           '',
-        database:           ''
+        host    :           'ddolfsb30gea9k.c36ugxkfyi6r.us-west-2.rds.amazonaws.com',
+        user    :           'fab4_engineers',
+        password:           'Password123',
+        database:           'fab4'
     });    
         
     //  today today today
@@ -46,7 +48,9 @@ module.exports = function(app){
         //  using momentjs 
         var checker = moment(dateAndtime, "YYYY-MM-DD h:mm:ss");
         var check_am_start = moment(today + " " + "06:30:00", "YYYY-MM-DD h:mm:ss");
-        var check_am_end = moment(today + " " + "18:29:59", "YYYY-MM-DD h:mm:ss");        
+        var check_am_end = moment(today + " " + "18:29:59", "YYYY-MM-DD h:mm:ss");    
+        
+        var check_midnight = moment(today + " " + "00:00:00", "YYYY-MM-DD h:mm:ss");
 
 
     // api
@@ -75,21 +79,23 @@ module.exports = function(app){
                                 for (var i = 0; i < results.length; i++) {
                                     obj.push(
                                         {
-                                            processName: results[i].process_id 
-                                        },
-                                        {
-                                            sumOuts: results[i].totalOuts
+                                            processName: results[i].process_id,
+                                            sumOuts: results[i].totalOuts 
                                         }
                                     );
                                 }
 
                         //connection.release();
                         var processOuts_json = JSON.stringify(obj);
-                        res.end(JSON.stringify(obj));
+                        var processOuts_tsv = TSV.stringify(obj);
+                       
 
-                        fs.writeFile('./JSONfile/' + process + '_outs.json', processOuts_json, 'utf8', function(err){
+                        fs.writeFile('./json/' + process + '_totalouts.json', processOuts_json, 'utf8', function(err){
                             if (err) throw err;
                         }); 
+                        
+                        res.end(JSON.stringify(obj));
+                        
                     });
                 
                 // if it's not between AM range then
@@ -101,7 +107,8 @@ module.exports = function(app){
                     connection.query({
 
                         //  not quite sure in the query july 22, 2017
-                        sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 18:30:00") AND date_time <= CONCAT("' + today + ' " + INTERVAL 1 DAY," 06:29:59")',
+                        //  __________________________________________________
+                        sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 18:30:00") AND date_time <= CONCAT("' + today + ' " ," 06:29:59")',
                         values: [process]
                     },  function (err, results, fields){
                         if (err) throw err;
@@ -111,9 +118,7 @@ module.exports = function(app){
                                 for (var i = 0; i < results.length; i++) {
                                     obj.push(
                                         {
-                                            processName: results[i].process_id 
-                                        },
-                                        {
+                                            processName: results[i].process_id,
                                             sumOuts: results[i].totalOuts
                                         }
                                     );
@@ -133,49 +138,115 @@ module.exports = function(app){
     app.get('/hourly/:process_id', function(req, res){
 
         pool.getConnection(function(err, connection){
+
             //  parse process url
             var process = req.params.process_id;
            
                 //  will check the AM and PM environment before running the query specifically for AM and PM shift
                 if (checker >= check_am_start && checker <= check_am_end) {
                     //
-                    console.log(dateAndtime + ' is between AM');
-
-                    //  6:30- 7:30 query
                         connection.query({
-                            sql: 'SELECT SUM(out_qty) AS zero FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 06:30:00")  AND date_time <= CONCAT("' + today + ' "," 07:29:59"); SELECT SUM(out_qty) AS one FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 07:30:00")  AND date_time <= CONCAT("' + today + ' "," 08:29:59");     SELECT SUM(out_qty) AS two FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 08:30:00")  AND date_time <= CONCAT("' + today + ' "," 09:29:59");     SELECT SUM(out_qty) AS three FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 09:30:00")  AND date_time <= CONCAT("' + today + ' "," 10:29:59");     SELECT SUM(out_qty) AS four FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 10:30:00")  AND date_time <= CONCAT("' + today + ' "," 11:29:59");     SELECT SUM(out_qty) AS five FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 11:30:00")  AND date_time <= CONCAT("' + today + ' "," 12:29:59");     SELECT SUM(out_qty) AS six FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 12:30:00")  AND date_time <= CONCAT("' + today + ' "," 13:29:59");     SELECT SUM(out_qty) AS seven FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 13:30:00")  AND date_time <= CONCAT("' + today + ' "," 14:29:59");     SELECT SUM(out_qty) AS eight FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 14:30:00")  AND date_time <= CONCAT("' + today + ' "," 15:29:59");     SELECT SUM(out_qty) AS nine FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 15:30:00")  AND date_time <= CONCAT("' + today + ' "," 16:29:59");     SELECT SUM(out_qty) AS ten FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 16:30:00")  AND date_time <= CONCAT("' + today + ' "," 17:29:59");     SELECT SUM(out_qty) AS eleven FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 17:30:00")  AND date_time <= CONCAT("' + today + ' "," 18:29:59")',
                             
-                            values: [process, process, process, process, process, process, process, process, process,           process, process, process]  
+                            sql: 'SELECT A.process_id, IF(A.totalOuts IS NULL, "", A.totalOuts) AS outs_one, IF(B.totalOuts IS NULL, "", B.totalOuts) AS outs_two, IF(C.totalOuts IS NULL, "", C.totalOuts) AS outs_three, IF(D.totalOuts IS NULL, "", D.totalOuts) AS outs_four, IF(E.totalOuts IS NULL, "", E.totalOuts) AS outs_five, IF(F.totalOuts IS NULL, "", F.totalOuts) AS outs_six, IF(G.totalOuts IS NULL, "", G.totalOuts) AS outs_seven, IF(H.totalOuts IS NULL, "", H.totalOuts) AS outs_eight, IF(I.totalOuts IS NULL, "", I.totalOuts) AS outs_nine, IF(J.totalOuts IS NULL, "", J.totalOuts) AS outs_ten, IF(K.totalOuts IS NULL, "", K.totalOuts) AS outs_eleven, IF(L.totalOuts IS NULL, "", L.totalOuts) AS outs_twelve FROM (SELECT A.process_id, SUM(A.out_qty) AS totalOuts FROM MES_OUT_DETAILS A  WHERE    A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 06:30:00")     && A.date_time <= CONCAT("' + today + ' ", " 07:29:59")) A   CROSS JOIN (SELECT     SUM(A.out_qty) AS totalOuts  FROM   MES_OUT_DETAILS A  WHERE   A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 07:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 08:29:59")) B CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 08:30:00")      && A.date_time <= CONCAT("' + today + ' ", " 09:29:59")) C  CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 09:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 10:29:59")) D    CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 10:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 11:29:59")) E   CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 11:30:00")          && A.date_time <= CONCAT("' + today + ' ", " 12:29:59")) F    CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 12:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 13:29:59")) G CROSS JOIN(SELECT  SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE  A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 13:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 14:29:59")) H    CROSS JOIN(SELECT        SUM(A.out_qty) AS totalOuts   FROM       MES_OUT_DETAILS A   WHERE       A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 14:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 15:29:59")) I     CROSS JOIN  (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 15:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 16:29:59")) J     CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 16:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 17:29:59")) K    CROSS JOIN(SELECT     SUM(A.out_qty) AS totalOuts FROM    MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 17:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 18:29:59")) L',
 
-                        }, function(err, row){
+                            values: [process, process, process, process, process, process, process, process, process, process, process, process]  
+
+                        }, function(err, results, fields){
                             if (err) throw err;
 
-                            var arr0 = row[0];
-                            var arr1 = row[1];
-                            var arr2 = row[2];
-                            var arr3 = row[3];
-                            var arr4 = row[4];
-                            var arr5 = row[5];
-                            var arr6 = row[6];
-                            var arr7 = row[7];
-                            var arr8 = row[8];
-                            var arr9 = row[9];
-                            var arr10 = row[10];
-                            var arr11 = row[11];
+                            var obj = [];
+
+                                    obj.push(
+                                        {   
+                                            hours: '06:30',
+                                            outs: results[0].outs_one,
+                                            
+                                        },
+                                        {
+                                            hours: '07:30',
+                                            outs: results[0].outs_two,
+                                            
+                                            
+                                        },
+                                        {
+                                            hours: '08:30',
+                                            outs: results[0].outs_three,
+                                            
+                                        },
+                                        {
+                                            hours: '09:30',
+                                            outs: results[0].outs_four,
+                                            
+                                        },
+                                        {
+                                            hours: '10:30',
+                                            outs: results[0].outs_five,
+                                            
+                                        },
+                                        {
+                                            hours: '11:30',
+                                            outs: results[0].outs_six,
+                                            
+                                        },
+                                        {
+                                            hours: '12:30',
+                                            outs: results[0].outs_seven,
+                                            
+                                        },
+                                        {
+                                            hours: '13:30',
+                                            outs: results[0].outs_eight,
+                                            
+                                        },
+                                        {
+                                            hours: '14:30',
+                                            outs: results[0].outs_nine,
+                                            
+                                        },
+                                        {
+                                            hours: '15:30',
+                                            outs: results[0].outs_ten,
+                                            
+                                        },
+                                        {
+                                            hours: '16:30',
+                                            outs: results[0].outs_eleven,
+                                            
+                                        },
+                                        {
+                                            hours: '17:30',
+                                            outs: results[0].outs_twelve,
+                                            
+                                        }
+                                        
+                                    );
                             
-                            var arr0 = arr0.concat(arr1, arr2, arr3, arr4, arr5, arr6, arr7, arr8, arr9, arr10, arr11);                 
-                            var processHourly_json = JSON.stringify(arr0);        
-                            res.end(JSON.stringify(arr0));
+                            // stringify obj to TSV
+                            var processHourly_tsv = TSV.stringify(obj);
+                            // obj to json
+                             var processHourly_json = JSON.stringify(obj);
+                            
+                            //  create .tsv per request
+                            fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
+                                if (err) throw err;
+                            });
 
-                            fs.writeFile('./JSONfile/' + process + '_hourly.json', processHourly_json, 'utf8', function(err){
-                            if (err) throw err;
-                            }); 
+                             //  create .json per request
+                            fs.writeFile('./public/' + process + '_hourly.json', processHourly_tsv, 'utf8', function(err){
+                                if (err) throw err;
+                            });
 
+                            //   render the ejs
+                            res.render(process);
+                                                    
                         });
+                
+                    
+                
                 // then for PM shift
                 } else {
                     //
-                    console.log(dateAndtime + ' is between AM');
+                    console.log(dateAndtime + ' is between PM');
 
                     //  18:30- 00:30 query
                         connection.query({
@@ -210,8 +281,15 @@ module.exports = function(app){
                 }
 
         });
+
+    
+    
+                       
+    
+    
     });
 
+         
 }
 
 

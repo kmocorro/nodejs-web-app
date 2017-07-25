@@ -8,7 +8,8 @@ var port = process.env.PORT || 3000;
 
 //  use the public folder to fetch data
 app.use('/', express.static(__dirname + '/public'));
-
+//  set the view engine dont forget 
+app.set('view engine', 'ejs');
 
 // run the function inside apicontroller
 apiController(app);
