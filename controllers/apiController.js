@@ -16,10 +16,10 @@ module.exports = function(app){
     //  change this create a dbconfig later
     var pool = mysql.createPool({
         connectionLimit:    100, //try for now
-        host    :           'ddolfsb30gea9k.c36ugxkfyi6r.us-west-2.rds.amazonaws.com',
-        user    :           'fab4_engineers',
-        password:           'Password123',
-        database:           'fab4'
+        host    :           '',
+        user    :           '',
+        password:           '',
+        database:           ''
     });    
         
     //  today today today
