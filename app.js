@@ -11,6 +11,10 @@ app.use('/', express.static(__dirname + '/public'));
 //  set the view engine dont forget 
 app.set('view engine', 'ejs');
 
+app.get('/', function(req, res){
+    res.render('index');
+});
+
 // run the function inside apicontroller
 apiController(app);
 
