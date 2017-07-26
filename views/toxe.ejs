@@ -1,62 +1,40 @@
 <!DOCTYPE html>
-<div>
-<svg width="900" height="300"></svg>
+<meta charset="utf-8">
+<body>
+<link rel= "stylesheet" href="/style.css">
+
+<script src="//d3js.org/d3.v4.0.0-alpha.9.min.js"></script>
+
+<h1><%= processOuts %></h1>
+
+<div class="header">
+  <script>
+    var format = d3.format(",d");
+
+    d3.select("h1")
+      .transition()
+        .duration(2500)
+        .on("start", function repeat() {
+          d3.active(this)
+              .tween("text", function() {
+                var that = d3.select(this),
+                    i = d3.interpolateNumber(that.text().replace(/,/g, ""), Math.random() * 1e6);
+                return function(t) { that.text(format(i(t))); };
+              })
+            .transition()
+              .delay(1500)
+              .on("start", repeat);
+        });
+
+  </script>
 </div>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script>
 
-var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 30, left: 50},
-    width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var parseTime = d3.timeParse("%H:%M");
+<div class="outscrapChart"> 
+    <svg class ="svgChart" width="1280" height="500"></svg>
+    <script type ='text/javascript' src="/toxe.js"></script>
+</div>
 
-var x = d3.scaleTime()
-    .rangeRound([0, width]);
-
-var y = d3.scaleLinear()
-    .rangeRound([height, 0]);
-
-var line = d3.line()
-    .x(function(d) { return x(d.hours); })
-    .y(function(d) { return y(d.outs); });
-
-d3.tsv("/toxe.tsv", function(d) {
-  d.hours = parseTime(d.hours);
-  d.outs = +d.outs;
-  return d;
-}, function(error, data) {
-  if (error) throw error;
-
-  x.domain(d3.extent(data, function(d) { return d.hours; }));
-  y.domain(d3.extent(data, function(d) { return d.outs; }));
-
-  g.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x))
-    .select(".domain")
-      .remove();
-
-  g.append("g")
-      .call(d3.axisLeft(y))
-    .append("text")
-      .attr("fill", "#000")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", "0.71em")
-      .attr("text-anchor", "end")
-      .text("Total Outs");
-
-  g.append("path")
-      .datum(data)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-linecap", "round")
-      .attr("stroke-width", 4)
-      .attr("d", line);
-});
-
-</script>
+<!--<div class="hourlyScraps">
+  <script type ='text/javascript' src="/damage_scraps.js"></script>
+</div>

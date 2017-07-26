@@ -3,11 +3,6 @@
 <style>
 
 body {
-  margin: auto;
-  width: 960px;
-}
-
-text {
   font: 10px sans-serif;
 }
 
@@ -24,8 +19,18 @@ text {
 
 .line {
   fill: none;
-  stroke: url(#temperature-gradient);
+  stroke: steelblue;
   stroke-width: 1.5px;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: none;
+  stroke: steelblue;
 }
 
 </style>
@@ -33,11 +38,14 @@ text {
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 
-var margin = {top: 250, right: 20, bottom: 30, left: 50},
+var margin = {top: 20, right: 50, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
-    height = 700 - margin.top - margin.bottom;
+    height = 500 - margin.top - margin.bottom;
 
-var parseDate = d3.time.format("%H:%M").parse;
+var parseDate = d3.time.format("%H:%M").parse,
+    bisectDate = d3.bisector(function(d) { return d.hours; }).left,
+    formatValue = d3.format("f"),
+    formatCurrency = function(d) { return "" + formatValue(d); };
 
 var x = d3.time.scale()
     .range([0, width]);
@@ -54,7 +62,6 @@ var yAxis = d3.svg.axis()
     .orient("left");
 
 var line = d3.svg.line()
-    .interpolate("basis")
     .x(function(d) { return x(d.hours); })
     .y(function(d) { return y(d.outs); });
 
@@ -72,24 +79,12 @@ d3.tsv("data.tsv", function(error, data) {
     d.outs = +d.outs;
   });
 
+  data.sort(function(a, b) {
+    return a.hours - b.hours;
+  });
+
   x.domain([data[0].hours, data[data.length - 1].hours]);
   y.domain(d3.extent(data, function(d) { return d.outs; }));
-
-  svg.append("linearGradient")
-      .attr("id", "temperature-gradient")
-      .attr("gradientUnits", "userSpaceOnUse")
-      .attr("x1", 0).attr("y1", y(13000))
-      .attr("x2", 0).attr("y2", y(000))
-    .selectAll("stop")
-      .data([
-        {offset: "0%", color: "green"},
-        {offset: "10%", color: "black"},
-        {offset: "10%", color: "black"},
-        {offset: "100%", color: "red"}
-      ])
-    .enter().append("stop")
-      .attr("offset", function(d) { return d.offset; })
-      .attr("stop-color", function(d) { return d.color; });
 
   svg.append("g")
       .attr("class", "x axis")
@@ -104,12 +99,41 @@ d3.tsv("data.tsv", function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Total Outs");
+      .text("Price ($)");
 
   svg.append("path")
       .datum(data)
       .attr("class", "line")
       .attr("d", line);
+
+  var focus = svg.append("g")
+      .attr("class", "focus")
+      .style("display", "none");
+
+  focus.append("circle")
+      .attr("r", 4.5);
+
+  focus.append("text")
+      .attr("x", 9)
+      .attr("dy", ".35em");
+
+  svg.append("rect")
+      .attr("class", "overlay")
+      .attr("width", width)
+      .attr("height", height)
+      .on("mouseover", function() { focus.style("display", null); })
+      .on("mouseout", function() { focus.style("display", "none"); })
+      .on("mousemove", mousemove);
+
+  function mousemove() {
+    var x0 = x.invert(d3.mouse(this)[0]),
+        i = bisectDate(data, x0, 1),
+        d0 = data[i - 1],
+        d1 = data[i],
+        d = x0 - d0.hours > d1.hours - x0 ? d1 : d0;
+    focus.attr("transform", "translate(" + x(d.hours) + "," + y(d.outs) + ")");
+    focus.select("text").text(formatCurrency(d.outs));
+  }
 });
 
 </script>
