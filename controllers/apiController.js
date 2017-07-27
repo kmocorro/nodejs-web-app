@@ -2,8 +2,9 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var moment = require('moment');
 var fs = require('fs');
-
 var TSV = require('tsv');
+
+var json2html = require('node-json2html');
 
 
 module.exports = function(app){
@@ -299,8 +300,57 @@ module.exports = function(app){
                        
     
     
-    });
+    }); 
 
+
+    app.get('/viewtarget', function(req, res){
+
+        var poolLocal = mysql.createPool({
+            multipleStatements: true,
+            connectionLimit:    100, //try for now
+            host    :           'localhost',
+            user    :           'root',
+            password:           '2qhls34r',
+            database:           'dbtarget'
+        }); 
+
+
+        poolLocal.getConnection(function(err, connection){
+
+            connection.query({
+                sql: 'SELECT * FROM TBL_TARGET_DETAILS',
+            },  function(err, results, fields){
+                if (err) throw err;
+                
+                    var obj = [];
+
+                        for(i = 0; i < results.length; i++){
+                            obj.push({
+
+                                process:    results[i].process,
+                                start_time: results[i].start_time,
+                                end_time:   results[i].end_time,
+                                num_tool:   results[i].num_tool,
+                                uph:        results[i].uph, 
+                                oee:        results[i].oee,
+                                toolpm:     results[i].toolpm,
+                                target:     results[i].target,
+                                remarks:    results[i].remarks
+
+                            });
+                        };
+
+                    res.send(JSON.stringify(obj));
+
+                    fs.writeFile('./public/viewTarget.json', JSON.stringify(obj), 'utf8', function(err){
+                        if (err) throw err;
+                    });
+
+            });
+
+        });
+
+    });
          
 }
 
