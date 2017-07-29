@@ -9,7 +9,9 @@ var json2html = require('node-json2html');
 
 module.exports = function(app){
 
+    //  look for http request, parse out json from http request
     app.use(bodyParser.json());
+    //  make sure that this api can handle % sign and numbers from the url
     app.use(bodyParser.urlencoded({ extended: true }));
 
     //  mysql connection via connection pooling ( I think it's better than creating new connections everytime )
@@ -23,6 +25,16 @@ module.exports = function(app){
         password:           'Password123',
         database:           'fab4'
     });    
+
+
+    var poolLocal = mysql.createPool({
+        multipleStatements: true,
+        connectionLimit:    100, //try for now
+        host    :           'localhost',
+        user    :           'root',
+        password:           '2qhls34r',
+        database:           'dbtarget'
+        }); 
         
     //  today today today
     var today = new Date();
@@ -248,13 +260,10 @@ module.exports = function(app){
                             fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
                                 if (err) throw err;
                             });
-                            
-                            
+                    
                             res.render(process);
                         });
 
-                        
-                    
                 
                 // then for PM shift
                 } else {
@@ -262,84 +271,50 @@ module.exports = function(app){
                     console.log(dateAndtime + ' is between PM');
 
                     //  18:30- 00:30 query
-                        connection.query({
-                            sql: 'SELECT SUM(out_qty) AS zero FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 18:30:00")  AND date_time <= CONCAT("' + today + ' "," 19:29:59"); SELECT SUM(out_qty) AS one FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 19:30:00")  AND date_time <= CONCAT("' + today + ' "," 20:29:59");     SELECT SUM(out_qty) AS two FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 20:30:00")  AND date_time <= CONCAT("' + today + ' "," 21:29:59");     SELECT SUM(out_qty) AS three FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 21:30:00")  AND date_time <= CONCAT("' + today + ' "," 22:29:59");     SELECT SUM(out_qty) AS four FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 23:30:00")  AND date_time <= CONCAT("' + today + ' "," 00:29:59");     SELECT SUM(out_qty) AS five FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 11:30:00")  AND date_time <= CONCAT("' + today + ' "," 00:29:59");     SELECT SUM(out_qty) AS six FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 00:30:00")  AND date_time <= CONCAT("' + today + ' "," 01:29:59");     SELECT SUM(out_qty) AS seven FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 01:30:00")  AND date_time <= CONCAT("' + today + ' "," 02:29:59");     SELECT SUM(out_qty) AS eight FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 02:30:00")  AND date_time <= CONCAT("' + today + ' "," 03:29:59");     SELECT SUM(out_qty) AS nine FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 03:30:00")  AND date_time <= CONCAT("' + today + ' "," 04:29:59");     SELECT SUM(out_qty) AS ten FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 04:30:00")  AND date_time <= CONCAT("' + today + ' "," 05:29:59");     SELECT SUM(out_qty) AS eleven FROM MES_OUT_DETAILS WHERE process_id = ? AND date_time >= CONCAT("' + today + ' "," 05:30:00")  AND date_time <= CONCAT("' + today + ' "," 06:29:59")',
-                            
-                            values: [process, process, process, process, process, process, process, process, process,           process, process, process]  
-
-                        }, function(err, row){
-                            if (err) throw err;
-
-                            var arr12 = row[12];
-                            var arr13 = row[13];
-                            var arr14 = row[14];
-                            var arr15 = row[15];
-                            var arr16 = row[16];
-                            var arr17 = row[17];
-                            var arr18 = row[18];
-                            var arr19 = row[19];
-                            var arr20 = row[20];
-                            var arr21 = row[21];
-                            var arr22 = row[22];
-                            var arr23 = row[23];
-                            
-                            var arr12 = arr12.concat(arr13, arr14, arr15, arr16, arr17, arr18, arr19, arr20, arr21, arr22, arr23);                            
-                            
-
-                            res.end(JSON.stringify(arr12));
-                            
-
-                        });
+                        
 
                 }
 
         });
-
-    
-    
-                       
-    
-    
     }); 
 
 
-    app.get('/viewtarget', function(req, res){
-
-        var poolLocal = mysql.createPool({
-            multipleStatements: true,
-            connectionLimit:    100, //try for now
-            host    :           'localhost',
-            user    :           'root',
-            password:           '2qhls34r',
-            database:           'dbtarget'
-        }); 
-
+    //  index initializer 
+    app.get('/api/view', function(req, res){
 
         poolLocal.getConnection(function(err, connection){
 
             connection.query({
-                sql: 'SELECT * FROM TBL_TARGET_DETAILS',
+                sql: 'SELECT C.id, A.process_id, A.process_name, B.uph, B.oee, B.num_tool, C.toolpm, C.start_time, C.end_time, C.remarks, C.target FROM tbl_target_process A JOIN tbl_target_default B ON A.process_id = B.process_id JOIN tbl_target_settings C ON A.process_id = C.process_id ORDER BY A.process_id',
             },  function(err, results, fields){
                 if (err) throw err;
                 
                     var obj = [];
-
+                    
                         for(i = 0; i < results.length; i++){
                             obj.push({
 
-                                process:    results[i].process,
-                                start_time: results[i].start_time,
-                                end_time:   results[i].end_time,
-                                num_tool:   results[i].num_tool,
-                                uph:        results[i].uph, 
-                                oee:        results[i].oee,
-                                toolpm:     results[i].toolpm,
-                                target:     results[i].target,
-                                remarks:    results[i].remarks
+                                id:             results[i].id,
+                                process_id:     results[i].process_id,
+                                process_name:   results[i].process_name,
+                                start_time:     new Date(results[i].start_time),
+                                end_time:       new Date(results[i].end_time),
+                                num_tool:       results[i].num_tool,
+                                uph:            results[i].uph, 
+                                oee:            results[i].oee,
+                                toolpm:         results[i].toolpm,
+                                target:         Math.round(results[i].uph * (results[i].num_tool - results[i].toolpm) * (results[i].oee/100)) || 0,
+                                remarks:        results[i].remarks
 
                             });
                         };
+                    
+                    //  for date issues format I use moment
+                    Date.prototype.toJSON = function() {
+                        return moment(this).format("YYYY-MM-DD h:mm:ss");
+                    }
 
+                    //  send json 
                     res.send(JSON.stringify(obj));
 
                     fs.writeFile('./public/viewTarget.json', JSON.stringify(obj), 'utf8', function(err){
@@ -351,7 +326,91 @@ module.exports = function(app){
         });
 
     });
-         
+
+    // update data
+    app.post('/api/update', function(req, res){
+        poolLocal.getConnection(function(err, connection){
+            
+            if(req.body.id) {
+
+                //  need to dis to align the jeasyui datetime with my format
+                startTime = new Date(req.body.start_time);
+                endTime = new Date(req.body.end_time);
+
+                //  for target data, compute details
+                var computedTarget = Math.round((req.body.uph * (req.body.num_tool - req.body.toolpm)) * (req.body.oee/100)) || 0;
+
+                //  for date issues format I use moment
+                Date.prototype.toJSON = function() {
+                   return moment(this).format("YYYY-MM-DD h:mm:ss");
+                }
+
+                connection.query({
+                sql: 'UPDATE tbl_target_settings SET start_time =?, end_time =?, toolpm =?, remarks= ?, target=? WHERE id =? ',
+                values: [startTime, endTime, req.body.toolpm, req.body.remarks, computedTarget, req.body.id]
+            },  function(err, results, fields){
+                if(err) throw err;
+
+                console.log('Target id: ' + req.body.id + ' has been updated!');
+                res.redirect('back');
+            });
+
+            } else {
+                console.log('something is wrong');
+            }
+            
+        });
+
+    });
+        
+    //  add tool time data
+    app.post('/api/add', function(req, res){
+        poolLocal.getConnection(function(err, connection){
+
+            //  need to dis to align the jeasyui datetime with my format
+            startTime = new Date(req.body.startTime);
+            endTime = new Date(req.body.endTime);
+
+            //  for the target compute the details
+            var computedTarget = Math.round((req.body.uph * (req.body.num_tool - req.body.toolpm)) * (req.body.oee/100)) || 0;
+            
+
+            //  for date issues format I use moment
+            Date.prototype.toJSON = function() {
+               return moment(this).format("YYYY-MM-DD h:mm:ss");
+            }
+
+
+            connection.query({
+                sql: 'INSERT INTO tbl_target_settings SET process_id =?, start_time=?, end_time=?, toolpm=?, target = ?, remarks=?',
+                values: [req.body.process_id, startTime, endTime, req.body.toolpm, computedTarget, req.body.remarks]
+            },  function(err, results, fields){
+                if (err) throw err;
+
+                console.log('Process : ' + req.body.process + ' has been added!');
+                res.redirect('back');
+            });
+
+        });
+    
+    });
+
+    app.post('/api/delete', function(req, res){
+        poolLocal.getConnection(function(err, connection){
+
+            connection.query({
+                sql: 'DELETE FROM tbl_target_settings WHERE id=?',
+                values: [req.body.id]
+            },  function(err, results, fields){
+                if (err) throw err;
+
+                console.log('ID: ' + req.body.id + 'has been deleted!');
+                res.redirect('back');
+            });
+
+        });
+    })
 }
+
 
 

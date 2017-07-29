@@ -3,45 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>NodeJS Web App</title>
-    <link rel="stylesheet" type="text/css" href="./themes/metro/easyui.css">
+    <link rel="stylesheet" type="text/css" href="./themes/gray/easyui.css">
     <link rel="stylesheet" type="text/css" href="./themes/icon.css">
     <link rel="stylesheet" type="text/css" href="./demo/demo.css">
     <script type="text/javascript" src="./jquery.min.js"></script>
     <script type="text/javascript" src="./jquery.easyui.min.js"></script>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  
     
 </head>
 <body>
-    <div style="padding: 40px;"></div>
-    <div class="easyui-layout" style="max-width:100%;height:610px;">
+    <div style="padding: 0px;"></div>
+    <div class="easyui-layout" style="max-width:100%;height:700px;">
         <div id="p" data-options="region:'west',split: true" title="Menu" style="width:20%;padding:10px">
             <p></p>
         </div>
         <div data-options="region:'center'" title="Admin Panel">
-                    <table id="dg" title="Target Adjustment" class="easyui-datagrid" style="max-width:100%;height:100%;"
-                            url="/viewtarget"
+                    <table id="dg" title="Tool Time Adjustment" class="easyui-datagrid" style="max-width:100%;height:100%;"
+                            url="/viewtarget/"
                             method="get"
                             toolbar="#toolbar"
                             rownumbers="true" fitColumns="true" singleSelect="true">
                     <thead>
                         <tr>
-                            <th field="process" width="30">Process Name</th>
-                            <th field="start_time" width="35">Start Time</th>
-                            <th field="end_time" width="35">End Time</th>
-                            <th field="num_tool" width="20">Num of Tools</th>
+                            <th field="id" width="10">Tid</th>
+                            <th field="process_name" width="30">Process Name</th>
                             <th field="uph" width="10">UPH</th>
                             <th field="oee" width="10">OEE</th>
-                            <th field="toolpm" width="10">DT/SDT</th>
+                            <th field="num_tool" width="10">Tools</th>
+                            <th field="toolpm" width="15">Tool Time</th>
+                            <th field="start_time" width="35">Start Time</th>
+                            <th field="end_time" width="35">End Time</th>
+                            <th field="remarks" width="30">Tool Time Remarks</th>
                             <th field="target" width="10">Target</th>
-                            <th field="remarks" width="30">Remarks</th>
                         </tr>
                     </thead>
                     </table>
                     <div id="toolbar">
-                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">New Tool Time</a>
-                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Edit UPH</a>
-                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Edit OEE</a>
-                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Remove Tool Time</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newToolTime()">New</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editToolTime()">Edit</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Delete</a>
                     </div>
                     
                     <div id="dlg" class="easyui-dialog" style="width:400px"
@@ -49,54 +49,116 @@
                         <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px">
                             <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">Tool Time Information</div>   
                              <div style="margin-bottom:10px">
-                                    <select class="easyui-combobox" name="process" label="Process:" required="true" labelPosition="top" style="width:100%;height:52px;">
-                                        <option value="DAMAGE">DAMAGE</option>
-                                        <option value="POLY">POLY</option>
-                                        <option value="BSGDEP">BSGDEP</option>
-                                        <option value="NTM">NTM</option>
-                                        <option value="NOXECA">NOXE</option>
-                                        <option value="NDEP">NDEP</option>
-                                        <option value="PTM">PTM</option>
-                                        <option value="TOXE">TOXE</option>
-                                        <option value="CLEANTEX">CLEANTEX</option>
-                                        <option value="PDRIVE">PDRIVE</option>
-                                        <option value="ARC_BARC">ARC_BARC</option>
-                                        <option value="PBA">PBA</option>
-                                        <option value="LCM">LCM</option>
-                                        <option value="SEED">SEED</option>
-                                        <option value="FGA">FGA</option>
-                                        <option value="PLM">PLM</option>
-                                        <option value="EDG_CTR">EDG_CTR</option>
-                                        <option value="PLATING">PLATING</option>
-                                        <option value="ETCHBK">ETCHBK</option>
-                                        <option value="HST">HST</option>
-                                        <option value="VISUAL">VISUAL</option>
-                                        <option value="TEST">TEST</option>
+                                    <select class="easyui-combobox" name="process_id" label="Process:" required="true" labelPosition="top" style="width:100%;height:52px;">
+                                        <option value="101">DAMAGE</option>
+                                        <option value="102">POLY</option>
+                                        <option value="103">BSGDEP</option>
+                                        <option value="104">NTM</option>
+                                        <option value="105">NOXE</option>
+                                        <option value="106">NDEP</option>
+                                        <option value="107">PTM</option>
+                                        <option value="108">TOXE</option>
+                                        <option value="109">CLEANTEX</option>
+                                        <option value="110">PDRIVE</option>
+                                        <option value="111">ARC_BARC</option>
+                                        <option value="112">PBA</option>
+                                        <option value="113">LCM</option>
+                                        <option value="114">SEED</option>
+                                        <option value="115">FGA</option>
+                                        <option value="116">PLM</option>
+                                        <option value="117">EDG_CTR</option>
+                                        <option value="118">PLATING</option>
+                                        <option value="119">ETCHBK</option>
+                                        <option value="120">HST</option>
+                                        <option value="121">VISUAL</option>
+                                        <option value="122">TEST</option>
                                     </select>
                              </div>
+
+                            
                             <div style="margin-bottom:10px">
-                                <input class="easyui-datetimebox" label="Select Start Time:" required ="true"  labelPosition="top" style="width:100%;height:52px;">
+                                <input class="easyui-datetimebox" label="Select Start Time:" required ="true"  labelPosition="top" name="startTime" style="width:100%;height:52px;" >
                             </div>
                             <div style="margin-bottom:10px">
-                                <input class="easyui-datetimebox" label="Select End Time:" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                                <input class="easyui-datetimebox" label="Select End Time:" required ="true" labelPosition="top" name="endTime" style="width:100%;height:52px;" >
                             </div>
                             <div style="margin-bottom:10px">
-                                <input class="easyui-textbox" label="Number of Tools:" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                                <input class="easyui-textbox" label="Tool Time:" required ="true" labelPosition="top" name="toolpm" style="width:100%;height:52px;">
                             </div>
-                             <div style="margin-bottom:30px">
-                                <input class="easyui-textbox" name="remarks" style="width:100%;height:90px" data-options="label:'Remarks:', multiline:true" required="true" labelPosition="top">
+                             <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" id="remarks" name="remarks" style="width:100%;height:90px" data-options="label:'Tool Time Remarks:', multiline:true" required="true" labelPosition="top">
                             </div>
                         </form>
                     </div>
+                    <!---->
                     <div id="dlg-buttons">
-                        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">Save</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveTooltime()" style="width:90px">Save</a>
                         <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Cancel</a>
                     </div>
+
+
+
+                    <!---->
+                    <div id="editToolTime" class="easyui-dialog" style="width:400px"
+                            closed="true" buttons="#editToolTime-buttons">
+                        <form id="fmuph" method="post" novalidate style="margin:0;padding:20px 50px">
+
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" disabled="disable" name="id" label="Target ID" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                             <div style="margin-bottom:10px">
+                                    <select class="easyui-combobox" disabled="disable" name="process_id" label="Process ID:" required="true" labelPosition="top" style="width:100%;height:52px;">
+                                    </select>
+                             </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" disabled="disable" name="num_tool" label="Tools: " required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" disabled="disable" name="uph" label="Tool UPH:" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" disabled="disable" name="oee" label="OEE:" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                        
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-datetimebox" name="start_time" label="Select Start Time:" required ="true" id="startTime_sub" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-datetimebox" name="end_time" label="Select End Time:" required ="true" id="endTime_sub"  labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <select class="easyui-combobox" name="toolpm" label="Tool Time:" required="true" labelPosition="top" style="width:100%;height:52px;">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
+                            </div>
+                             <div style="margin-bottom:30px">
+                                <input class="easyui-textbox" name="remarks" style="width:100%;height:52px" data-options="label:'Tool Time Remarks:'" required="true" labelPosition="top">
+                            </div>
+                             
+                        </form>
+                    </div>
+
+                    <!---->
+                    <div id="editToolTime-buttons">
+                        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveEditedToolTime()" style="width:90px">Save</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#editToolTime').dialog('close')" style="width:90px">Cancel</a>
+                    </div>
+
+
                     <script type="text/javascript">
                         var url;
 
                         $('#dg').datagrid({
-                            url: '/viewtarget',
+                            url: '/api/view',
                             toolbar: "#toolbar",
                             method: "get",
                             rownumbers:"true",
@@ -104,36 +166,47 @@
                             singleSelect:"true"
                         });
 
-                        function newUser(){
+                        function newToolTime(){
                             $('#dlg').dialog('open').dialog('center').dialog('setTitle','New Tool Time');
                             $('#fm').form('clear');
-                            url = 'index';
-                        }
-                        function editUser(){
-                            var row = $('#dg').datagrid('getSelected');
-                            if (row){
-                                $('#dlg').dialog('open').dialog('center').dialog('setTitle','Edit User');
-                                $('#fm').form('load',row);
-                                url = 'update_user.php?id='+row.id;
-                            }
-                        }
-                        function saveUser(){
+                            url = '/api/add';
+
+                        }   
+                        function saveTooltime(){
                             $('#fm').form('submit',{
                                 url: url,
                                 onSubmit: function(){
                                     return $(this).form('validate');
                                 },
                                 success: function(result){
-                                    var result = eval('('+result+')');
-                                    if (result.errorMsg){
-                                        $.messager.show({
-                                            title: 'Error',
-                                            msg: result.errorMsg
-                                        });
-                                    } else {
+
                                         $('#dlg').dialog('close');        // close the dialog
                                         $('#dg').datagrid('reload');    // reload the user data
-                                    }
+                                    
+                                }
+                            });
+                        }
+
+                        function editToolTime(){
+                            var row = $('#dg').datagrid('getSelected');
+                            if (row){
+                                $('#editToolTime').dialog('open').dialog('center').dialog('setTitle','Edit Tool time');
+                                $('#fmuph').form('load', row);
+                                url = '/api/update';
+                            }
+                        }
+                        function saveEditedToolTime(){
+                            $("input").prop('disabled', false);
+                            $('#fmuph').form('submit',{
+                                url: url,
+                                onSubmit: function(){
+                                    return $(this).form('validate');
+                                },
+                                success: function(result){
+                                    
+                                        $('#editToolTime').dialog('close'); // close the dialog
+                                        $('#dg').datagrid('reload');        // reload the user data
+                                    
                                 }
                             });
                         }
@@ -142,16 +215,7 @@
                             if (row){
                                 $.messager.confirm('Confirm','Are you sure you want to delete this tool time?',function(r){
                                     if (r){
-                                        $.post('destroy_user.php',{id:row.id},function(result){
-                                            if (result.success){
-                                                $('#dg').datagrid('reload');    // reload the user data
-                                            } else {
-                                                $.messager.show({    // show error message
-                                                    title: 'Error',
-                                                    msg: result.errorMsg
-                                                });
-                                            }
-                                        },'json');
+                                        $.post('/api/delete');
                                     }
                                 });
                             }
