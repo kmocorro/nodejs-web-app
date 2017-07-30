@@ -4,15 +4,18 @@ var moment = require('moment');
 var fs = require('fs');
 var TSV = require('tsv');
 
-var json2html = require('node-json2html');
-
-
+//  export
 module.exports = function(app){
 
     //  look for http request, parse out json from http request
     app.use(bodyParser.json());
-    //  make sure that this api can handle % sign and numbers from the url
+    //  make sure that this api can handle url requests
     app.use(bodyParser.urlencoded({ extended: true }));
+
+    //  for date issues format
+    Date.prototype.toJSON = function() {
+    return moment(this).format("YYYY-MM-DD HH:00");
+    }
 
     //  mysql connection via connection pooling ( I think it's better than creating new connections everytime )
     //  using the db credentials 
@@ -276,6 +279,37 @@ module.exports = function(app){
                 }
 
         });
+        
+        
+        /*//  this should display target every hour on the database
+        poolLocal.getConnection(function(err, connection){
+        if (err) throw err;
+            
+            //  use the parameter per process
+            var process_name = req.params.process_id;
+
+            //  AM shift
+            if (checker >= check_am_start && checker <= check_am_end){
+
+                connection.query({
+                    sql: '',
+                    values: []
+                },  function(err, results, fields){
+                    if(err) throw err;
+
+                    
+
+                });
+
+            //  PM shift
+            } else {
+
+            }
+
+
+            
+        }); */
+
     }); 
 
 
@@ -284,8 +318,9 @@ module.exports = function(app){
 
         poolLocal.getConnection(function(err, connection){
 
+            
             connection.query({
-                sql: 'SELECT C.id, A.process_id, A.process_name, B.uph, B.oee, B.num_tool, C.toolpm, C.start_time, C.end_time, C.remarks, C.target FROM tbl_target_process A JOIN tbl_target_default B ON A.process_id = B.process_id JOIN tbl_target_settings C ON A.process_id = C.process_id ORDER BY A.process_id',
+                sql: 'select * from view_target;',
             },  function(err, results, fields){
                 if (err) throw err;
                 
@@ -299,25 +334,22 @@ module.exports = function(app){
                                 process_name:   results[i].process_name,
                                 start_time:     new Date(results[i].start_time),
                                 end_time:       new Date(results[i].end_time),
+                                duration:      Math.round(results[i].duration),
                                 num_tool:       results[i].num_tool,
                                 uph:            results[i].uph, 
                                 oee:            results[i].oee,
                                 toolpm:         results[i].toolpm,
-                                target:         Math.round(results[i].uph * (results[i].num_tool - results[i].toolpm) * (results[i].oee/100)) || 0,
+                                target:         results[i].target,
                                 remarks:        results[i].remarks
 
                             });
                         };
                     
-                    //  for date issues format I use moment
-                    Date.prototype.toJSON = function() {
-                        return moment(this).format("YYYY-MM-DD h:mm:ss");
-                    }
-
+                
                     //  send json 
                     res.send(JSON.stringify(obj));
 
-                    fs.writeFile('./public/viewTarget.json', JSON.stringify(obj), 'utf8', function(err){
+                    fs.writeFile('./public/view.json', JSON.stringify(obj), 'utf8', function(err){
                         if (err) throw err;
                     });
 
@@ -340,14 +372,10 @@ module.exports = function(app){
                 //  for target data, compute details
                 var computedTarget = Math.round((req.body.uph * (req.body.num_tool - req.body.toolpm)) * (req.body.oee/100)) || 0;
 
-                //  for date issues format I use moment
-                Date.prototype.toJSON = function() {
-                   return moment(this).format("YYYY-MM-DD h:mm:ss");
-                }
 
                 connection.query({
-                sql: 'UPDATE tbl_target_settings SET start_time =?, end_time =?, toolpm =?, remarks= ?, target=? WHERE id =? ',
-                values: [startTime, endTime, req.body.toolpm, req.body.remarks, computedTarget, req.body.id]
+                sql: 'UPDATE tbl_target_settings SET start_time =?, end_time =?, toolpm =?, remarks= ? WHERE id =? ',
+                values: [startTime, endTime, req.body.toolpm, req.body.remarks, req.body.id]
             },  function(err, results, fields){
                 if(err) throw err;
 
@@ -367,34 +395,35 @@ module.exports = function(app){
     app.post('/api/add', function(req, res){
         poolLocal.getConnection(function(err, connection){
 
-            //  need to dis to align the jeasyui datetime with my format
-            startTime = new Date(req.body.startTime);
-            endTime = new Date(req.body.endTime);
+            if(req.body.process_id){
 
-            //  for the target compute the details
-            var computedTarget = Math.round((req.body.uph * (req.body.num_tool - req.body.toolpm)) * (req.body.oee/100)) || 0;
-            
+                //  need to dis to align the jeasyui datetime with my format
+                startTime = new Date(req.body.startTime);
+                endTime = new Date(req.body.endTime);
 
-            //  for date issues format I use moment
-            Date.prototype.toJSON = function() {
-               return moment(this).format("YYYY-MM-DD h:mm:ss");
+
+                connection.query({
+                    sql: 'INSERT INTO tbl_target_settings SET process_id =?, start_time=?, end_time=?, toolpm=?, remarks=?',
+                    values: [req.body.process_id, startTime, endTime, req.body.toolpm, req.body.remarks]
+                },  function(err, results, fields){
+                    if (err) throw err;
+
+                    console.log('Process : ' + req.body.process_id + ' has been added!');
+                    res.redirect('back');
+                });
+
+            } else {
+
+                console.log('error');
+                console.log(req.body.process_id);
             }
-
-
-            connection.query({
-                sql: 'INSERT INTO tbl_target_settings SET process_id =?, start_time=?, end_time=?, toolpm=?, target = ?, remarks=?',
-                values: [req.body.process_id, startTime, endTime, req.body.toolpm, computedTarget, req.body.remarks]
-            },  function(err, results, fields){
-                if (err) throw err;
-
-                console.log('Process : ' + req.body.process + ' has been added!');
-                res.redirect('back');
-            });
-
+       
         });
     
     });
 
+
+    //  delete tool time data using id
     app.post('/api/delete', function(req, res){
         poolLocal.getConnection(function(err, connection){
 
@@ -404,7 +433,7 @@ module.exports = function(app){
             },  function(err, results, fields){
                 if (err) throw err;
 
-                console.log('ID: ' + req.body.id + 'has been deleted!');
+                console.log('ID: ' + req.body.id + ' has been deleted!');
                 res.redirect('back');
             });
 

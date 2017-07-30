@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<link rel= "stylesheet" href="/style.css">
+
+<script src="//d3js.org/d3.v4.0.0-alpha.9.min.js"></script>
+
+<h1><%= processOuts %></h1>
+
+<div class="header">
+  <script>
+    var format = d3.format(",d");
+
+    d3.select("h1")
+      .transition()
+        .duration(2500)
+        .on("start", function repeat() {
+          d3.active(this)
+              .tween("text", function() {
+                var that = d3.select(this),
+                    i = d3.interpolateNumber(that.text().replace(/,/g, ""), Math.random() * 1e6);
+                return function(t) { that.text(format(i(t))); };
+              })
+            .transition()
+              .delay(1500)
+              .on("start", repeat);
+        });
+
+  </script>
+</div>
+
+
+<div class="outscrapChart"> 
+    <svg class ="svgChart" width="1280" height="500"></svg>
+    <script type ='text/javascript' src="/pdrive.js"></script>
+</div>
+
+<!--<div class="hourlyScraps">
+  <script type ='text/javascript' src="/damage_scraps.js"></script>
+</div>
