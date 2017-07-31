@@ -20,6 +20,7 @@ module.exports = function(app){
     //  mysql connection via connection pooling ( I think it's better than creating new connections everytime )
     //  using the db credentials 
     //  change this create a dbconfig later
+    //  need to encrypt this.
     var pool = mysql.createPool({
         multipleStatements: true,
         connectionLimit:    100, //try for now
@@ -123,7 +124,7 @@ module.exports = function(app){
                     //  callback = connection if it's PM
                     connection.query({
 
-                        //  not quite sure in the query july 22, 2017
+                        //  not quite sure in the query as of july 22, 2017 need to go through later
                         //  __________________________________________________
                         sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 18:30:00") AND date_time <= CONCAT("' + today + ' " ," 06:29:59")',
                         values: [process]
@@ -177,7 +178,7 @@ module.exports = function(app){
                              res.render(process, {processOuts: processOuts});
                         });
 
-                    //
+                    //  need to translate this to script.......
                         connection.query({
                             
                             sql: 'SELECT A.process_id, IF(A.totalOuts IS NULL, 0, A.totalOuts) AS outs_one, IF(B.totalOuts IS NULL, 0, B.totalOuts) AS outs_two, IF(C.totalOuts IS NULL, 0, C.totalOuts) AS outs_three, IF(D.totalOuts IS NULL, 0, D.totalOuts) AS outs_four, IF(E.totalOuts IS NULL, 0, E.totalOuts) AS outs_five, IF(F.totalOuts IS NULL, 0, F.totalOuts) AS outs_six, IF(G.totalOuts IS NULL, 0, G.totalOuts) AS outs_seven, IF(H.totalOuts IS NULL, 0, H.totalOuts) AS outs_eight, IF(I.totalOuts IS NULL, 0, I.totalOuts) AS outs_nine, IF(J.totalOuts IS NULL, 0, J.totalOuts) AS outs_ten, IF(K.totalOuts IS NULL, 0, K.totalOuts) AS outs_eleven, IF(L.totalOuts IS NULL, 0, L.totalOuts) AS outs_twelve FROM (SELECT A.process_id, SUM(A.out_qty) AS totalOuts FROM MES_OUT_DETAILS A  WHERE A.process_id = ? AND A.date_time >= CONCAT("' + today + ' ", " 06:30:00")     && A.date_time <= CONCAT("' + today + ' ", " 07:29:59")) A   CROSS JOIN (SELECT     SUM(A.out_qty) AS totalOuts  FROM   MES_OUT_DETAILS A  WHERE   A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 07:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 08:29:59")) B CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 08:30:00")      && A.date_time <= CONCAT("' + today + ' ", " 09:29:59")) C  CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 09:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 10:29:59")) D    CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 10:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 11:29:59")) E   CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 11:30:00")          && A.date_time <= CONCAT("' + today + ' ", " 12:29:59")) F    CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 12:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 13:29:59")) G CROSS JOIN(SELECT  SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE  A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 13:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 14:29:59")) H    CROSS JOIN(SELECT        SUM(A.out_qty) AS totalOuts   FROM       MES_OUT_DETAILS A   WHERE       A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 14:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 15:29:59")) I     CROSS JOIN  (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 15:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 16:29:59")) J     CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 16:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 17:29:59")) K    CROSS JOIN(SELECT     SUM(A.out_qty) AS totalOuts FROM    MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 17:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 18:29:59")) L UNION ALL SELECT A.process_id, IF(A.totalScraps IS NULL, 0, A.totalScraps) AS scraps_one, IF(B.totalScraps IS NULL, 0, B.totalScraps) AS scraps_two, IF(C.totalScraps IS NULL, 0, C.totalScraps) AS scraps_three, IF(D.totalScraps IS NULL, 0, D.totalScraps) AS scraps_four, IF(E.totalScraps IS NULL, 0, E.totalScraps) AS scraps_five, IF(F.totalScraps IS NULL, 0, F.totalScraps) AS scraps_six, IF(G.totalScraps IS NULL, 0, G.totalScraps) AS scraps_seven, IF(H.totalScraps IS NULL, 0, H.totalScraps) AS scraps_eight, IF(I.totalScraps IS NULL, 0, I.totalScraps) AS scraps_nine, IF(J.totalScraps IS NULL, 0, J.totalScraps) AS scraps_ten, IF(K.totalScraps IS NULL, 0, K.totalScraps) AS scraps_eleven, IF(L.totalScraps IS NULL, 0, L.totalScraps) AS scraps_twelve FROM (SELECT A.process_id, SUM(A.scrap_qty) AS totalScraps FROM MES_SCRAP_DETAILS A  WHERE  A.process_id = ? AND   A.date_time >= CONCAT("' + today + ' ", " 06:30:00")     && A.date_time <= CONCAT("' + today + ' ", " 07:29:59")) A   CROSS JOIN (SELECT     SUM(A.scrap_qty) AS totalScraps  FROM   MES_SCRAP_DETAILS A  WHERE   A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 07:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 08:29:59")) B CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 08:30:00")      && A.date_time <= CONCAT("' + today + ' ", " 09:29:59")) C  CROSS JOIN  (SELECT       SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 09:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 10:29:59")) D    CROSS JOIN  (SELECT       SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 10:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 11:29:59")) E   CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 11:30:00")          && A.date_time <= CONCAT("' + today + ' ", " 12:29:59")) F    CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 12:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 13:29:59")) G CROSS JOIN(SELECT  SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE  A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 13:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 14:29:59")) H    CROSS JOIN(SELECT        SUM(A.scrap_qty) AS totalScraps   FROM       MES_SCRAP_DETAILS A   WHERE       A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 14:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 15:29:59")) I     CROSS JOIN  (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 15:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 16:29:59")) J     CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 16:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 17:29:59")) K    CROSS JOIN(SELECT     SUM(A.scrap_qty) AS totalScraps FROM    MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 17:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 18:29:59")) L',
@@ -274,7 +275,7 @@ module.exports = function(app){
                     console.log(dateAndtime + ' is between PM');
 
                     //  18:30- 00:30 query
-                        
+                    //  need to go through PM shift to validate
 
                 }
 
@@ -320,7 +321,7 @@ module.exports = function(app){
 
             
             connection.query({
-                sql: 'select * from view_target;',
+                sql: 'select * from view_target ORDER BY id DESC',
             },  function(err, results, fields){
                 if (err) throw err;
                 
@@ -438,7 +439,78 @@ module.exports = function(app){
             });
 
         });
-    })
+    });
+
+
+    //  Settings
+    app.get('/settings/view', function(req, res) {
+
+        poolLocal.getConnection(function(err, connection){
+            if (err) throw err;
+
+            connection.query({
+                sql: 'SELECT * FROM view_default',
+            },  function(err, results, fields){
+                if (err) throw err;
+
+                    var obj = [];
+
+                    for(i=0; i < results.length; i++){
+
+                        obj.push({
+
+                            id:         results[i].id,
+                            process_name: results[i].process_name,
+                            uph:        results[i].uph,
+                            oee:        results[i].oee,
+                            num_tool:   results[i].num_tool
+
+                        });
+
+                    };
+
+                    //  send json 
+                    res.send(JSON.stringify(obj));
+
+                    fs.writeFile('./public/settings.json', JSON.stringify(obj), 'utf8', function(err){
+                        if (err) throw err;
+                    });    
+
+            });
+
+        });
+
+    });
+
+    //  SETTINGS edit button
+
+    app.post('/settings/update', function(req, res){
+    
+        poolLocal.getConnection(function(err,connection){
+            if (err) throw err;
+
+            if(req.body.id){
+
+                connection.query({
+                sql: 'UPDATE tbl_target_default SET uph= ?, oee= ?, num_tool= ? WHERE id = ? ',
+                values: [req.body.uph, req.body.oee, req.body.num_tool, req.body.id]
+
+                },  function(err, results, fields){
+                    if (err) throw err;
+                    
+                    console.log('Target id: ' + req.body.id + ' has been updated!');
+                    res.redirect('back');
+
+                });
+            }else{
+                console.log('settings/update api error')
+            }
+            
+
+
+        });
+
+    });
 }
 
 

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>NodeJS Web App</title>
+    <link rel="stylesheet" type="text/css" href="./themes/material/easyui.css">
+    <link rel="stylesheet" type="text/css" href="./themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="./demo/demo.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <script type="text/javascript" src="./jquery.min.js"></script>
+    <script type="text/javascript" src="./jquery.easyui.min.js"></script>
+  
+    
+</head>
+<body>
+    <div style="padding: 0px;"></div>
+    <div class="easyui-layout" style="max-width:100%;height:700px;">
+        <div id="p" data-options="region:'west',split: true" title="Menu" style="width:20%;padding:10px">
+            <a href="/" class="button secondary" >Home</a>
+            <div class="separator"></div>
+            <a href="/settings" class="button secondary"  target="_blank">Edit OEE and UPH</a><br/>
+            <div class="separator"><span class="textseparator" aria-label="or">Hourly Outs Monitoring</span></div>
+            <a href="/hourly/damage"  target="_blank">DAMAGE</a><br/>
+            <a href="/hourly/poly" target="_blank">POLY</a><br/>
+            <a href="/hourly/bsgdep" target="_blank">BSGDEP</a><br/>
+            <a href="/hourly/ntm" target="_blank">NTM</a><br/>
+            <a href="/hourly/noxe" target="_blank">NOXE</a><br/>
+            <a href="/hourly/ndep" target="_blank">NDEP</a><br/>
+            <a href="/hourly/ptm" target="_blank">PTM</a><br/>
+            <a href="/hourly/toxe" target="_blank">TOXE</a><br/>
+            <a href="/hourly/cleatex" target="_blank">CLEANTEX</a><br/>
+            <a href="/hourly/pdrive" target="_blank">PDRIVE</a><br/>
+            <a href="/hourly/arc_barc" target="_blank">OLT</a><br/>
+            <a href="/hourly/pba" target="_blank">PBA</a><br/>
+            <a href="/hourly/lcm" target="_blank">LCM</a><br/>
+            <a href="/hourly/seed" target="_blank">SEED</a><br/>
+            <a href="/hourly/fga" target="_blank">FGA</a><br/>
+            <a href="/hourly/plm" target="_blank">PLM</a><br/>
+            <a href="/hourly/edg_ctr" target="_blank">EDGE COAT</a><br/>
+            <a href="/hourly/plating" target="_blank">PLATING</a><br/>
+            <a href="/hourly/etchbk" target="_blank">ETCHBK</a><br/>
+            <a href="/hourly/hst" target="_blank">HST</a><br/>
+            <a href="/hourly/test" target="_blank">TEST</a><br/>
+            
+        </div>
+        <div data-options="region:'center'" title="Admin Panel">
+                    <table id="dg" title="UPH and OEE Adjustment" class="easyui-datagrid" style="max-width:100%;height:100%;"
+                            url="/settings/view"
+                            method="get"
+                            toolbar="#toolbar"
+                            rownumbers="true" fitColumns="true" singleSelect="true">
+                    <thead>
+                        <tr>
+                            <th field="id" width="10">Tid</th>
+                            <th field="process_name" width="30">Process Name</th>
+                            <th field="uph" width="10">UPH</th>
+                            <th field="oee" width="10">OEE</th>
+                            <th field="num_tool" width="10">Tools</th>
+                        </tr>
+                    </thead>
+                    </table>
+                    <div id="toolbar">
+                        <!--<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newToolTime()">New</a>-->
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editToolTime()">Edit</a>
+                        <!--<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyToolTime()">Delete</a>-->
+                    </div>
+                    
+                    <div id="dlg" class="easyui-dialog" style="width:400px"
+                            closed="true" buttons="#dlg-buttons">
+                        <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px">
+                            <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">Tool Time Information</div>   
+                             <div style="margin-bottom:10px">
+                                    <select class="easyui-combobox" name="process_id" label="Process:" required="true" labelPosition="top" style="width:100%;height:52px;">
+                                        <option value="101">DAMAGE</option>
+                                        <option value="102">POLY</option>
+                                        <option value="103">BSGDEP</option>
+                                        <option value="104">NTM</option>
+                                        <option value="105">NOXE</option>
+                                        <option value="106">NDEP</option>
+                                        <option value="107">PTM</option>
+                                        <option value="108">TOXE</option>
+                                        <option value="109">CLEANTEX</option>
+                                        <option value="110">PDRIVE</option>
+                                        <option value="111">ARC_BARC</option>
+                                        <option value="112">PBA</option>
+                                        <option value="113">LCM</option>
+                                        <option value="114">SEED</option>
+                                        <option value="115">FGA</option>
+                                        <option value="116">PLM</option>
+                                        <option value="117">EDG_CTR</option>
+                                        <option value="118">PLATING</option>
+                                        <option value="119">ETCHBK</option>
+                                        <option value="120">HST</option>
+                                        <option value="121">VISUAL</option>
+                                        <option value="122">TEST</option>
+                                    </select>
+                             </div>
+
+                            
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-datetimebox" label="Start Time: (hours only)" required ="true" labelPosition="top" showSeconds="false"  name="startTime" style="width:100%;height:52px;" >
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-datetimebox" label="End Time: (hours only)" required ="true" labelPosition="top" showSeconds="false"  name="endTime" style="width:100%;height:52px;" >
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" label="Tool Time: (number of tools)" required ="true" labelPosition="top" name="toolpm" style="width:100%;height:52px;">
+                            </div>
+                             <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" id="remarks" name="remarks" style="width:100%;height:90px" data-options="label:'Tool Time Remarks:', multiline:true" required="true" value="for PM" labelPosition="top">
+                            </div>
+                        </form>
+                    </div>
+                    <!---->
+                    <div id="dlg-buttons">
+                        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveTooltime()" style="width:90px">Save</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Cancel</a>
+                    </div>
+
+
+
+                    <!---->
+                    <div id="editToolTime" class="easyui-dialog" style="width:400px"
+                            closed="true" buttons="#editToolTime-buttons">
+                        <form id="fmuph" method="post" novalidate style="margin:0;padding:20px 50px">
+
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" disabled="disable" name="id" label="Target ID" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                             <div style="margin-bottom:10px">
+                                    <select class="easyui-combobox" disabled="disable" name="process_name" label="Process Name:" required="true" labelPosition="top" style="width:100%;height:52px;">
+                                    </select>
+                             </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" name="num_tool" label="Tools: " required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox"  name="uph" label="Tool UPH:" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox"  name="oee" label="OEE:" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                        
+                             
+                        </form>
+                    </div>
+
+                    <!---->
+                    <div id="editToolTime-buttons">
+                        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveEditedToolTime()" style="width:90px">Save</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#editToolTime').dialog('close')" style="width:90px">Cancel</a>
+                    </div>
+
+
+                    <script type="text/javascript">
+                        var url;
+                    
+                        $('#dg').datagrid({
+                            url: '/settings/view',
+                            toolbar: "#toolbar",
+                            method: "get",
+                            rownumbers:"true",
+                            fitColumns:"true",
+                            singleSelect:"true"
+                        });
+
+                        function newToolTime(){
+                            $('#dlg').dialog('open').dialog('center').dialog('setTitle','New Tool Time');
+                            $('#fm').form('clear');
+                            url = '/api/add';
+
+                        }   
+                        function saveTooltime(){
+                            $('#fm').form('submit',{
+                                url: url,
+                                onSubmit: function(){
+                                    return $(this).form('validate');
+                                },
+                                success: function(result){
+
+                                        $('#dlg').dialog('close');        // close the dialog
+                                        $('#dg').datagrid('reload');    // reload the user data
+                                    
+                                }
+                            });
+                        }
+
+                        function editToolTime(){
+                            var row = $('#dg').datagrid('getSelected');
+                            if (row){
+                                $('#editToolTime').dialog('open').dialog('center').dialog('setTitle','Edit Tool time');
+                                $('#fmuph').form('load', row);
+                                url = '/settings/update';
+                            }
+                        }
+                        function saveEditedToolTime(){
+                            $("input").prop('disabled', false);
+                            $('#fmuph').form('submit',{
+                                url: url,
+                                onSubmit: function(){
+                                    return $(this).form('validate');
+                                },
+                                success: function(result){
+                                    
+                                        $('#editToolTime').dialog('close'); // close the dialog
+                                        $('#dg').datagrid('reload');        // reload the user data
+                                    
+                                }
+                            });
+                        }
+                        function destroyToolTime(){
+                            var row = $('#dg').datagrid('getSelected');
+                            
+                            if (row){
+                            
+                                $.messager.confirm('Confirm','Are you sure you want to delete this tool time?',function(r){
+                                    if (r){
+                                        $.post('/api/delete',{id:row.id},function(){
+                                               $('#dg').datagrid('reload');    // reload the user data
+                                        });
+                                    }
+                                });
+                            }
+                            
+                        }
+                    </script>
+
+        </div>
+    </div>
+</body>
+</html>
