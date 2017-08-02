@@ -47,6 +47,7 @@ body {
     display: block;
     margin: 0;
     background: #f4f4f4;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
 }
 
 .viewContainer
@@ -97,7 +98,7 @@ body {
 .separator {
     border-top: 1px solid #cbd2d6;
     position: relative;
-    margin: 10px 0 10px;
+    margin: 5px 0 5px;
     text-align: center;
 }
 .textseparator {
@@ -114,6 +115,14 @@ a.button.secondary, a.button:link.secondary, a.button:visited.secondary, .button
     padding: 12px;
     padding-top: 15px;
 }
+
+a.button.tertiary, a.button:link.tertiary, a.button:visited.tertiary, .button.tertiary {
+    background-color: #E1E7EB;
+    color: #2C2E2F;
+    padding: 5px;
+    padding-top: 15px;
+}
+
 a.button, a.button:link, a.button:visited, .button {
     width: 100%;
     min-height: 44px;
@@ -124,10 +133,10 @@ a.button, a.button:link, a.button:visited, .button {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    -khtml-border-radius: 4px;
-    border-radius: 4px;
+    -webkit-border-radius:3px;
+    -moz-border-radius: 3px;
+    -khtml-border-radius: 3px;
+    border-radius: 3px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;

@@ -5,7 +5,6 @@
     <title>NodeJS Web App</title>
     <link rel="stylesheet" type="text/css" href="./themes/material/easyui.css">
     <link rel="stylesheet" type="text/css" href="./themes/icon.css">
-    <link rel="stylesheet" type="text/css" href="./demo/demo.css">
     <link rel="stylesheet" type="text/css" href="./style.css">
     <script type="text/javascript" src="./jquery.min.js"></script>
     <script type="text/javascript" src="./jquery.easyui.min.js"></script>
@@ -15,32 +14,53 @@
 <body>
     <div style="padding: 0px;"></div>
     <div class="easyui-layout" style="max-width:100%;height:700px;">
-        <div id="p" data-options="region:'west',split: true" title="Menu" style="width:20%;padding:10px">
+        <div id="p" data-options="region:'west',split: true" title="Menu" style="width:10%;padding:10px">
             <a href="/" class="button secondary" >Home</a>
             <div class="separator"></div>
-            <a href="/settings" class="button secondary"  target="_blank">Edit OEE and UPH</a><br/>
+            <a href="/settings" class="button secondary"  target="_blank">Settings</a><br/>
             <div class="separator"><span class="textseparator" aria-label="or">Hourly Outs Monitoring</span></div>
-            <a href="/hourly/damage"  target="_blank">DAMAGE</a><br/>
-            <a href="/hourly/poly" target="_blank">POLY</a><br/>
-            <a href="/hourly/bsgdep" target="_blank">BSGDEP</a><br/>
-            <a href="/hourly/ntm" target="_blank">NTM</a><br/>
-            <a href="/hourly/noxe" target="_blank">NOXE</a><br/>
-            <a href="/hourly/ndep" target="_blank">NDEP</a><br/>
-            <a href="/hourly/ptm" target="_blank">PTM</a><br/>
-            <a href="/hourly/toxe" target="_blank">TOXE</a><br/>
-            <a href="/hourly/cleatex" target="_blank">CLEANTEX</a><br/>
-            <a href="/hourly/pdrive" target="_blank">PDRIVE</a><br/>
-            <a href="/hourly/arc_barc" target="_blank">OLT</a><br/>
-            <a href="/hourly/pba" target="_blank">PBA</a><br/>
-            <a href="/hourly/lcm" target="_blank">LCM</a><br/>
-            <a href="/hourly/seed" target="_blank">SEED</a><br/>
-            <a href="/hourly/fga" target="_blank">FGA</a><br/>
-            <a href="/hourly/plm" target="_blank">PLM</a><br/>
-            <a href="/hourly/edg_ctr" target="_blank">EDGE COAT</a><br/>
-            <a href="/hourly/plating" target="_blank">PLATING</a><br/>
-            <a href="/hourly/etchbk" target="_blank">ETCHBK</a><br/>
-            <a href="/hourly/hst" target="_blank">HST</a><br/>
-            <a href="/hourly/test" target="_blank">TEST</a><br/>
+            <a href="/hourly/damage" class="button tertiary"  target="_blank">DAMAGE</a>
+            <div class="separator"></div>
+            <a href="/hourly/poly" class="button tertiary" target="_blank">POLY</a>
+            <div class="separator"></div>
+            <a href="/hourly/bsgdep" class="button tertiary" target="_blank">BSGDEP</a>
+            <div class="separator"></div>
+            <a href="/hourly/ntm" class="button tertiary"target="_blank">NTM</a>
+            <div class="separator"></div>
+            <a href="/hourly/noxe" class="button tertiary"target="_blank">NOXE</a>
+            <div class="separator"></div>
+            <a href="/hourly/ndep" class="button tertiary"target="_blank">NDEP</a>
+            <div class="separator"></div>
+            <a href="/hourly/ptm" class="button tertiary"target="_blank">PTM</a>
+            <div class="separator"></div>
+            <a href="/hourly/toxe" class="button tertiary"target="_blank">TOXE</a>
+            <div class="separator"></div>
+            <a href="/hourly/cleantex" class="button tertiary" target="_blank">CLEANTEX</a>
+            <div class="separator"></div>
+            <a href="/hourly/pdrive" class="button tertiary" target="_blank">PDRIVE</a>
+            <div class="separator"></div>
+            <a href="/hourly/arc_barc" class="button tertiary" target="_blank">OLT</a>
+            <div class="separator"></div>
+            <a href="/hourly/pba"  class="button tertiary" target="_blank">PBA</a>
+            <div class="separator"></div>
+            <a href="/hourly/lcm" class="button tertiary" target="_blank">LCM</a>
+            <div class="separator"></div>
+            <a href="/hourly/seed" class="button tertiary" target="_blank">SEED</a>
+            <div class="separator"></div>
+            <a href="/hourly/fga" class="button tertiary" target="_blank">FGA</a>
+            <div class="separator"></div>
+            <a href="/hourly/plm" class="button tertiary" target="_blank">PLM</a>
+            <div class="separator"></div>
+            <a href="/hourly/edg_ctr" class="button tertiary" target="_blank">EDGE COAT</a>
+            <div class="separator"></div>
+            <a href="/hourly/plating" class="button tertiary" target="_blank">PLATING</a>
+            <div class="separator"></div>
+            <a href="/hourly/etchbk" class="button tertiary" target="_blank">ETCHBK</a>
+            <div class="separator"></div>
+            <a href="/hourly/hst" class="button tertiary" target="_blank">HST</a>
+            <div class="separator"></div>
+            <a href="/hourly/test" class="button tertiary" target="_blank">TEST</a>
+            <div class="separator"></div>
             
         </div>
         <div data-options="region:'center'" title="Admin Panel">
@@ -61,7 +81,6 @@
                             <th field="end_time" width="30">End Time</th>
                             <th field="duration" width="15">Duration</th>
                             <th field="remarks" width="30">Tool Time Remarks</th>
-                            <th field="target" width="10">Target</th>
                         </tr>
                     </thead>
                     </table>

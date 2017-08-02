@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<link rel= "stylesheet" href="/style.css">
+
+<script src="//d3js.org/d3.v4.0.0-alpha.9.min.js"></script>
+
+<div class="viewContainer"></div>
+
+<div class="viewContainer container">
+
+  <div class="row">
+    <div class="wrap">Target</div>
+    <div class="wrap">Outs</div>
+    <div class="wrap">Variance</div>
+  </div>
+
+  <div class="row">
+    <div class="wrap">--</div>
+    <div class="wrap"><%= processOuts %></div>
+    <div class="wrap">--</div>
+  </div>
+
+
+  <div class="outscrapChart"> 
+      <svg class ="svgChart" width="1100" height="500"></svg>
+      <script type ='text/javascript' src="/fga.js"></script>
+  </div>
+
+</div>

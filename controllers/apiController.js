@@ -375,7 +375,7 @@ module.exports = function(app){
 
 
                 connection.query({
-                sql: 'UPDATE tbl_target_settings SET start_time =?, end_time =?, toolpm =?, remarks= ? WHERE id =? ',
+                sql: 'UPDATE tbl_target_view SET start_time =?, end_time =?, toolpm =?, remarks= ? WHERE id =? ',
                 values: [startTime, endTime, req.body.toolpm, req.body.remarks, req.body.id]
             },  function(err, results, fields){
                 if(err) throw err;
@@ -404,7 +404,7 @@ module.exports = function(app){
 
 
                 connection.query({
-                    sql: 'INSERT INTO tbl_target_settings SET process_id =?, start_time=?, end_time=?, toolpm=?, remarks=?',
+                    sql: 'INSERT INTO tbl_target_view SET process_id =?, start_time=?, end_time=?, toolpm=?, remarks=?',
                     values: [req.body.process_id, startTime, endTime, req.body.toolpm, req.body.remarks]
                 },  function(err, results, fields){
                     if (err) throw err;
@@ -412,6 +412,25 @@ module.exports = function(app){
                     console.log('Process : ' + req.body.process_id + ' has been added!');
                     res.redirect('back');
                 });
+
+                // INSERT 12 HOURS
+
+
+                // UPDATE@@@@@@@@2 start_time to tbl_target_details
+                connection.query({
+                    sql: 'INSERT INTO tbl_target_details SET date_time=?, process_id =?' ,
+                    values: [startTime, req.body.process_id]
+                },  function(err, resutls, fields){
+                    if (err) throw err;
+                });
+                // UPDATE@@@@@@@@@@ end_time to tbl_target_details
+                connection.query({
+                    sql: 'INSERT INTO tbl_target_details SET date_time=?, process_id =?' ,
+                    values: [endTime, req.body.process_id]
+                },  function(err, resutls, fields){
+                    if (err) throw err;
+                });
+
 
             } else {
 
@@ -429,7 +448,7 @@ module.exports = function(app){
         poolLocal.getConnection(function(err, connection){
 
             connection.query({
-                sql: 'DELETE FROM tbl_target_settings WHERE id=?',
+                sql: 'DELETE FROM tbl_target_view WHERE id=?',
                 values: [req.body.id]
             },  function(err, results, fields){
                 if (err) throw err;
@@ -469,17 +488,15 @@ module.exports = function(app){
 
                     };
 
-                    //  send json 
-                    res.send(JSON.stringify(obj));
-
-                    fs.writeFile('./public/settings.json', JSON.stringify(obj), 'utf8', function(err){
-                        if (err) throw err;
-                    });    
+                //  send json 
+                res.send(JSON.stringify(obj));
+                
+                fs.writeFile('./public/settings.json', JSON.stringify(obj), 'utf8', function(err){
+                  if (err) throw err;
+                });  
 
             });
-
         });
-
     });
 
     //  SETTINGS edit button
