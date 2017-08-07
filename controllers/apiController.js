@@ -4,6 +4,7 @@ var moment = require('moment');
 var fs = require('fs');
 var TSV = require('tsv');
 
+
 //  export
 module.exports = function(app){
 
@@ -14,7 +15,7 @@ module.exports = function(app){
 
     //  for date issues format
     Date.prototype.toJSON = function() {
-    return moment(this).format("YYYY-MM-DD HH:00");
+    return moment(this).format("YYYY-MM-DD");
     }
 
     //  mysql connection via connection pooling ( I think it's better than creating new connections everytime )
@@ -84,7 +85,6 @@ module.exports = function(app){
                 if (checker >= check_am_start && checker <= check_am_end) {
 
                     console.log(dateAndtime + ' is between AM');
-
                     //  callback = connection if it's AM
                     connection.query({
                         sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 06:30:00") AND date_time <= CONCAT("' + today + ' "," 18:29:59")',
@@ -148,17 +148,40 @@ module.exports = function(app){
                 }
                     
         });
+
+        
     });
 
 
 
     // http request hourly outs per process
-    app.get('/hourly/:process_id', function(req, res){
+    app.get('/hourly/:process_url', function(req, res, next){
 
+        //  parse process url
+        var process = req.params.process_url;   
+
+        poolLocal.getConnection(function(err, connection){
+            var process = req.params.process_url;
+
+                connection.query({
+                    sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "06:00:00" && stime <= CURTIME() THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE  process_name = ?',
+                    values: [process]
+
+                },  function(err, results, fields){
+
+                    var processTarget = [];
+
+                        processTarget.push(
+                            results[0].t_target
+                        );
+
+                    res.render(process, {processTarget: processTarget});
+                    
+                });
+        }); 
+        
+       //   hourly outs and dppm scrap
         pool.getConnection(function(err, connection){
-
-            //  parse process url
-            var process = req.params.process_id;
            
                 //  will check the AM and PM environment before running the query specifically for AM and PM shift
                 if (checker >= check_am_start && checker <= check_am_end) {
@@ -175,7 +198,8 @@ module.exports = function(app){
                                 );
 
                                 
-                             res.render(process, {processOuts: processOuts});
+                            console.log(processOuts);
+                        //     res.render(process, {processOuts: processOuts});
                         });
 
                     //  need to translate this to script.......
@@ -281,35 +305,6 @@ module.exports = function(app){
 
         });
         
-        
-        /*//  this should display target every hour on the database
-        poolLocal.getConnection(function(err, connection){
-        if (err) throw err;
-            
-            //  use the parameter per process
-            var process_name = req.params.process_id;
-
-            //  AM shift
-            if (checker >= check_am_start && checker <= check_am_end){
-
-                connection.query({
-                    sql: '',
-                    values: []
-                },  function(err, results, fields){
-                    if(err) throw err;
-
-                    
-
-                });
-
-            //  PM shift
-            } else {
-
-            }
-
-
-            
-        }); */
 
     }); 
 
@@ -321,7 +316,7 @@ module.exports = function(app){
 
             
             connection.query({
-                sql: 'select * from view_target ORDER BY id DESC',
+                sql: 'SELECT A.process_id, C.process_name, A.today_date, A.stime, round((B.oee/100)*B.uph*B.num_tool) as default_target, round((B.oee/100)*B.uph*A.toolpm) as adjusted_target, round(((B.oee/100)*B.uph*B.num_tool)-((B.oee/100)*B.uph*A.toolpm)) as total_target, A.remarks FROM tbl_target_input A JOIN tbl_target_default B ON A.process_id = B.process_id JOIN tbl_target_process C ON A.process_id = C.process_id',
             },  function(err, results, fields){
                 if (err) throw err;
                 
@@ -330,17 +325,13 @@ module.exports = function(app){
                         for(i = 0; i < results.length; i++){
                             obj.push({
 
-                                id:             results[i].id,
                                 process_id:     results[i].process_id,
                                 process_name:   results[i].process_name,
-                                start_time:     new Date(results[i].start_time),
-                                end_time:       new Date(results[i].end_time),
-                                duration:      Math.round(results[i].duration),
-                                num_tool:       results[i].num_tool,
-                                uph:            results[i].uph, 
-                                oee:            results[i].oee,
-                                toolpm:         results[i].toolpm,
-                                target:         results[i].target,
+                                today_date:     new Date(results[i].today_date),
+                                stime:          results[i].stime,
+                                default_target: results[i].default_target,
+                                adjusted_target:results[i].adjusted_target,
+                                total_target:   results[i].total_target,
                                 remarks:        results[i].remarks
 
                             });
@@ -375,7 +366,7 @@ module.exports = function(app){
 
 
                 connection.query({
-                sql: 'UPDATE tbl_target_view SET start_time =?, end_time =?, toolpm =?, remarks= ? WHERE id =? ',
+                sql: 'UPDATE tbl_target_toolpm SET start_time =?, end_time =?, toolpm =?, remarks= ? WHERE id =? ',
                 values: [startTime, endTime, req.body.toolpm, req.body.remarks, req.body.id]
             },  function(err, results, fields){
                 if(err) throw err;
@@ -402,7 +393,7 @@ module.exports = function(app){
                 startTime = new Date(req.body.startTime);
                 endTime = new Date(req.body.endTime);
 
-
+                /*
                 connection.query({
                     sql: 'INSERT INTO tbl_target_view SET process_id =?, start_time=?, end_time=?, toolpm=?, remarks=?',
                     values: [req.body.process_id, startTime, endTime, req.body.toolpm, req.body.remarks]
@@ -411,10 +402,7 @@ module.exports = function(app){
 
                     console.log('Process : ' + req.body.process_id + ' has been added!');
                     res.redirect('back');
-                });
-
-                // INSERT 12 HOURS
-
+                }); */
 
                 // UPDATE@@@@@@@@2 start_time to tbl_target_details
                 connection.query({
@@ -423,6 +411,7 @@ module.exports = function(app){
                 },  function(err, resutls, fields){
                     if (err) throw err;
                 });
+
                 // UPDATE@@@@@@@@@@ end_time to tbl_target_details
                 connection.query({
                     sql: 'INSERT INTO tbl_target_details SET date_time=?, process_id =?' ,
@@ -431,7 +420,27 @@ module.exports = function(app){
                     if (err) throw err;
                 });
 
+               //   instead of adding literal values, UPDATE!
+                connection.query({
+                    sql: 'UPDATE tbl_target_input SET toolpm = ? , remarks = ? WHERE today_date = ? AND process_id = ? AND stime >= ? && stime <= ? ',
+                    values: [req.body.toolpm, req.body.remarks, new Date(req.body.today_date), req.body.process_id, req.body.stime, req.body.etime]
+                },  function(err, results, fields){
+                    if (err) throw err;
 
+                    console.log(req.body.toolpm);
+                    console.log(req.body.remarks);
+                    console.log(new Date(req.body.today_date));
+                    console.log(req.body.process_id);
+                    console.log(req.body.stime);
+                    console.log(req.body.etime);
+                        
+                                      
+                    console.log('Target id: ' + req.body.process_id + ' has been ADDED!');
+                    res.redirect('back');
+
+                });
+
+                
             } else {
 
                 console.log('error');
