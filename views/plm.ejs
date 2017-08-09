@@ -16,9 +16,22 @@
   </div>
 
   <div class="row">
-    <div class="wrap">--</div>
-    <div class="wrap"><%= processOuts %></div>
-    <div class="wrap">--</div>
+    <div class="wrap"> 
+      <% data.forEach(function(gg) { %>
+      <%= gg.processTarget %>
+      <%}); %>
+    </div>
+    <div class="wrap">
+      <% data.forEach(function(gg) { %>
+      <%= gg.processOuts %>
+      <%}); %>
+    </div>
+    <div class="wrap">
+      
+      <%= data.variance %>
+      
+      
+    </div>
   </div>
 
 

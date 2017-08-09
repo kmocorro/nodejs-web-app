@@ -156,52 +156,90 @@ module.exports = function(app){
 
     // http request hourly outs per process
     app.get('/hourly/:process_url', function(req, res, next){
-
+        
         //  parse process url
         var process = req.params.process_url;   
-
-        poolLocal.getConnection(function(err, connection){
-            var process = req.params.process_url;
-
-                connection.query({
-                    sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "06:00:00" && stime <= CURTIME() THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE  process_name = ?',
-                    values: [process]
-
-                },  function(err, results, fields){
-
-                    var processTarget = [];
-
-                        processTarget.push(
-                            results[0].t_target
-                        );
-
-                    res.render(process, {processTarget: processTarget});
-                    
-                });
-        }); 
         
-       //   hourly outs and dppm scrap
+            // promise 1
+            var hourlyTargetPromise = new Promise (function(resolve, reject){
+                    
+                //  local database
+                poolLocal.getConnection(function(err, connection){
+                            
+                        //  query
+                    connection.query({
+                        sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "06:00:00" && stime <= CURTIME() THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE  process_name = ?',
+                        values: [process]
+                            },  function(err, results, fields){
+                                if (err) return reject(err);
+
+                                var processTarget = [];
+                                    processTarget.push(
+                                        results[0].t_target
+                                    );                 
+
+                                resolve({processTarget: processTarget});
+                                
+                    });
+
+                }); 
+
+            });
+        
+            //  promise 2
+            var hourlyOutsPromise = new Promise (function(resolve, reject){
+
+                //   systems database
+                pool.getConnection(function(err, connection){
+                
+                    //  will check the AM and PM 
+                    if (checker >= check_am_start && checker <= check_am_end) {
+
+                        // for total outs
+                            connection.query({
+                                sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 06:30:00") AND date_time <= CONCAT("' + today + ' "," 18:29:59")',
+                                values: [process]
+                                },  function(err, results, fields){
+                                    if (err) return reject(err);
+
+                                    var processOuts = [];
+
+                                        processOuts.push(
+                                            results[0].totalOuts
+                                        );
+
+                                    resolve({processOuts: processOuts});
+
+                            });
+
+                        }else{
+                        // pm shift here...
+                    }
+                });
+            });
+
+        //  aggregate multiple promises 
+        Promise.all([hourlyTargetPromise, hourlyOutsPromise]).then(function(values){
+
+           var process = req.params.process_url;
+
+           var data = values;
+
+           var variance = data[0]['processTarget'][0] - data[1]['processOuts'][0];
+
+           data["variance"] = [variance];
+        
+           //combine all resolve data to be render
+           res.render(process, {data} );
+        });
+
+
+       //   systems database
         pool.getConnection(function(err, connection){
            
-                //  will check the AM and PM environment before running the query specifically for AM and PM shift
-                if (checker >= check_am_start && checker <= check_am_end) {
-                    // for total outs
-                        connection.query({
-                            sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 06:30:00") AND date_time <= CONCAT("' + today + ' "," 18:29:59")',
-                        values: [process]
-                        },  function(err, results, fields){
-
-                            var processOuts = [];
-
-                                processOuts.push(
-                                    results[0].totalOuts
-                                );
-
-                                
-                            console.log(processOuts);
-                        //     res.render(process, {processOuts: processOuts});
-                        });
-
+            //  will check the AM and PM 
+            if (checker >= check_am_start && checker <= check_am_end) {
+  
                     //  need to translate this to script.......
                         connection.query({
                             
@@ -289,7 +327,7 @@ module.exports = function(app){
                                 if (err) throw err;
                             });
                     
-                            res.render(process);
+                           // res.render(process);
                         });
 
                 
@@ -313,10 +351,9 @@ module.exports = function(app){
     app.get('/api/view', function(req, res){
 
         poolLocal.getConnection(function(err, connection){
-
             
             connection.query({
-                sql: 'SELECT A.process_id, C.process_name, A.today_date, A.stime, round((B.oee/100)*B.uph*B.num_tool) as default_target, round((B.oee/100)*B.uph*A.toolpm) as adjusted_target, round(((B.oee/100)*B.uph*B.num_tool)-((B.oee/100)*B.uph*A.toolpm)) as total_target, A.remarks FROM tbl_target_input A JOIN tbl_target_default B ON A.process_id = B.process_id JOIN tbl_target_process C ON A.process_id = C.process_id',
+                sql: 'SELECT A.process_id, C.process_name, A.today_date, A.stime, round(CASE WHEN A.stime = "06:00:00" || A.stime = "18:00:00" THEN (((B.oee / 100) * B.uph * B.num_tool)/2) ELSE ((B.oee / 100) * B.uph * B.num_tool) END) AS default_target, round((B.oee / 100) * B.uph * A.toolpm) AS adjusted_target, round((CASE WHEN A.stime = "06:00:00" || A.stime = "18:00:00" THEN (((B.oee / 100) * B.uph * B.num_tool)/2) ELSE ((B.oee / 100) * B.uph * B.num_tool) END) - ((B.oee / 100) * B.uph * A.toolpm)) AS total_target FROM tbl_target_input A JOIN tbl_target_default B ON A.process_id = B.process_id JOIN tbl_target_process C ON A.process_id = C.process_id WHERE today_date = curdate()',
             },  function(err, results, fields){
                 if (err) throw err;
                 
