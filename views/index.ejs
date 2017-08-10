@@ -74,7 +74,8 @@
 
                             <th field="process_name" width="10">Process Name</th>
                             <th field="today_date" width="15">Date</th>
-                            <th field="stime" width="10">Time</th>
+                            <th field="stime" width="10">Start Time</th>
+                            <th field="ntime" width="10">End Time</th>
                             <th field="default_target" width="12">Default Target</th>
                             <th field="adjusted_target" width="12">Affected Outs</th>
                             <th field="total_target" width="15">Total Target Output</th>
@@ -121,71 +122,145 @@
 
                             
                             <div style="margin-bottom:10px">
-                                <input class="easyui-datebox" label="Date:" required ="true" labelPosition="top"  name="today_date" style="width:100%;height:52px;" >
+                                <input class="easyui-datebox" label="Date: (Today)" required ="true" labelPosition="top"  name="today_date" style="width:100%;height:52px;" >
                             </div>
 
                             <div style="margin-bottom:10px">
-                                <select class="easyui-combobox" label="Start Time: (hours only)" required ="true" labelPosition="top"  name="stime" style="width:100%;height:52px;" >
-                                    <option value="06:00:00">6AM</option>
-                                    <option value="07:00:00">7AM</option>
-                                    <option value="08:00:00">8AM</option>
-                                    <option value="09:00:00">9AM</option>
-                                    <option value="10:00:00">10AM</option>
-                                    <option value="11:00:00">11AM</option>
-                                    <option value="12:00:00">12PM</option>
-                                    <option value="13:00:00">1PM</option>
-                                    <option value="14:00:00">2PM</option>
-                                    <option value="15:00:00">3PM</option>
-                                    <option value="16:00:00">4PM</option>
-                                    <option value="17:00:00">5PM</option>
-                                    <option value="18:00:00">6PM</option>
-                                    <option value="19:00:00">7PM</option>
-                                    <option value="20:00:00">8PM</option>
-                                    <option value="21:00:00">9PM</option>
-                                    <option value="22:00:00">10PM</option>
-                                    <option value="23:00:00">11PM</option>
-                                    <option value="00:00:00">12AM</option>
-                                    <option value="01:00:00">1AM</option>
-                                    <option value="02:00:00">2AM</option>
-                                    <option value="03:00:00">3AM</option>
-                                    <option value="04:00:00">4AM</option>
-                                    <option value="05:00:00">5AM</option>
+                                <select class="easyui-combobox" label="Start Time:" required ="true" labelPosition="top"  name="stime" style="width:100%;height:52px;" >
+                                    <option value="06:30:00">06:30:00</option>
+                                    <option value="07:00:00">07:00:00</option>
+                                    <option value="07:30:00">07:30:00</option>
+                                    <option value="08:00:00">08:00:00</option>
+                                    <option value="08:30:00">08:30:00</option>
+                                    <option value="09:00:00">09:00:00</option>
+                                    <option value="09:30:00">09:30:00</option>
+                                    <option value="10:00:00">10:00:00</option>
+                                    <option value="10:30:00">10:30:00</option>
+                                    <option value="11:00:00">11:00:00</option>
+                                    <option value="11:30:00">11:30:00</option>
+                                    <option value="12:00:00">12:00:00</option>
+                                    <option value="12:30:00">12:30:00</option>
+                                    <option value="13:00:00">13:00:00</option>
+                                    <option value="13:30:00">13:30:00</option>
+                                    <option value="14:00:00">14:00:00</option>
+                                    <option value="14:30:00">14:30:00</option>
+                                    <option value="15:00:00">15:00:00</option>
+                                    <option value="15:30:00">15:30:00</option>
+                                    <option value="16:00:00">16:00:00</option>
+                                    <option value="16:30:00">16:30:00</option>
+                                    <option value="17:00:00">17:00:00</option>
+                                    <option value="17:30:00">17:30:00</option>
+                                    <option value="18:00:00">18:00:00</option>
+                                    <option value="18:30:00">18:30:00</option>
+                                    <option value="19:00:00">19:00:00</option>
+                                    <option value="19:30:00">19:30:00</option>
+                                    <option value="20:00:00">20:00:00</option>
+                                    <option value="20:30:00">20:30:00</option>
+                                    <option value="21:00:00">21:00:00</option>
+                                    <option value="21:30:00">21:30:00</option>
+                                    <option value="22:00:00">22:00:00</option>
+                                    <option value="22:30:00">22:30:00</option>
+                                    <option value="23:00:00">23:00:00</option>
+                                    <option value="23:30:00">23:30:00</option>
+                                    <option value="00:00:00">00:00:00</option>
+                                    <option value="00:30:00">00:30:00</option>
+                                    <option value="01:00:00">01:00:00</option>
+                                    <option value="01:30:00">01:30:00</option>
+                                    <option value="02:00:00">02:00:00</option>
+                                    <option value="02:30:00">02:30:00</option>
+                                    <option value="03:00:00">03:00:00</option>
+                                    <option value="03:30:00">03:30:00</option>
+                                    <option value="04:00:00">04:00:00</option>
+                                    <option value="04:30:00">04:30:00</option>
+                                    <option value="05:00:00">05:00:00</option>
+                                    <option value="05:30:00">05:30:00</option>
+                                    <option value="06:00:00">06:00:00</option>
+                                    
                                 </select>
                             </div>
 
                             <div style="margin-bottom:10px">
-                                <select class="easyui-combobox" label="End Time: (hours only)" required ="true" labelPosition="top" name="etime" style="width:100%;height:52px;" >
-                                    <option value="06:00:00">6AM</option>
-                                    <option value="07:00:00">7AM</option>
-                                    <option value="08:00:00">8AM</option>
-                                    <option value="09:00:00">9AM</option>
-                                    <option value="10:00:00">10AM</option>
-                                    <option value="11:00:00">11AM</option>
-                                    <option value="12:00:00">12PM</option>
-                                    <option value="13:00:00">1PM</option>
-                                    <option value="14:00:00">2PM</option>
-                                    <option value="15:00:00">3PM</option>
-                                    <option value="16:00:00">4PM</option>
-                                    <option value="17:00:00">5PM</option>
-                                    <option value="18:00:00">6PM</option>
-                                    <option value="19:00:00">7PM</option>
-                                    <option value="20:00:00">8PM</option>
-                                    <option value="21:00:00">9PM</option>
-                                    <option value="22:00:00">10PM</option>
-                                    <option value="23:00:00">11PM</option>
-                                    <option value="00:00:00">12AM</option>
-                                    <option value="01:00:00">1AM</option>
-                                    <option value="02:00:00">2AM</option>
-                                    <option value="03:00:00">3AM</option>
-                                    <option value="04:00:00">4AM</option>
-                                    <option value="05:00:00">5AM</option>
+                                <select class="easyui-combobox" label="End Time:" required ="true" labelPosition="top" name="etime" style="width:100%;height:52px;" >
+                                    <option value="06:30:00">06:30:00</option>
+                                    <option value="07:00:00">07:00:00</option>
+                                    <option value="07:30:00">07:30:00</option>
+                                    <option value="08:00:00">08:00:00</option>
+                                    <option value="08:30:00">08:30:00</option>
+                                    <option value="09:00:00">09:00:00</option>
+                                    <option value="09:30:00">09:30:00</option>
+                                    <option value="10:00:00">10:00:00</option>
+                                    <option value="10:30:00">10:30:00</option>
+                                    <option value="11:00:00">11:00:00</option>
+                                    <option value="11:30:00">11:30:00</option>
+                                    <option value="12:00:00">12:00:00</option>
+                                    <option value="12:30:00">12:30:00</option>
+                                    <option value="13:00:00">13:00:00</option>
+                                    <option value="13:30:00">13:30:00</option>
+                                    <option value="14:00:00">14:00:00</option>
+                                    <option value="14:30:00">14:30:00</option>
+                                    <option value="15:00:00">15:00:00</option>
+                                    <option value="15:30:00">15:30:00</option>
+                                    <option value="16:00:00">16:00:00</option>
+                                    <option value="16:30:00">16:30:00</option>
+                                    <option value="17:00:00">17:00:00</option>
+                                    <option value="17:30:00">17:30:00</option>
+                                    <option value="18:00:00">18:00:00</option>
+                                    <option value="18:30:00">18:30:00</option>
+                                    <option value="19:00:00">19:00:00</option>
+                                    <option value="19:30:00">19:30:00</option>
+                                    <option value="20:00:00">20:00:00</option>
+                                    <option value="20:30:00">20:30:00</option>
+                                    <option value="21:00:00">21:00:00</option>
+                                    <option value="21:30:00">21:30:00</option>
+                                    <option value="22:00:00">22:00:00</option>
+                                    <option value="22:30:00">22:30:00</option>
+                                    <option value="23:00:00">23:00:00</option>
+                                    <option value="23:30:00">23:30:00</option>
+                                    <option value="00:00:00">00:00:00</option>
+                                    <option value="00:30:00">00:30:00</option>
+                                    <option value="01:00:00">01:00:00</option>
+                                    <option value="01:30:00">01:30:00</option>
+                                    <option value="02:00:00">02:00:00</option>
+                                    <option value="02:30:00">02:30:00</option>
+                                    <option value="03:00:00">03:00:00</option>
+                                    <option value="03:30:00">03:30:00</option>
+                                    <option value="04:00:00">04:00:00</option>
+                                    <option value="04:30:00">04:30:00</option>
+                                    <option value="05:00:00">05:00:00</option>
+                                    <option value="05:30:00">05:30:00</option>
+                                    <option value="06:00:00">06:00:00</option>
                                 </select>
                             </div>
                             <div style="margin-bottom:10px">
-                                <input class="easyui-textbox" label="Tool Time: (number of tools)" required ="true" labelPosition="top" name="toolpm" style="width:100%;height:52px;">
+                                <select class="easyui-combobox" label="Tool Time: (number of tools/banks)" required ="true" labelPosition="top" name="toolpm" style="width:100%;height:52px;">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="10">11</option>
+                                    <option value="10">12</option>
+                                    <option value="10">13</option>
+                                    <option value="10">14</option>
+                                    <option value="10">15</option>
+                                    <option value="10">16</option>
+                                    <option value="10">17</option>
+                                    <option value="10">18</option>
+                                    <option value="10">19</option>
+                                    <option value="10">20</option>
+                                    <option value="10">21</option>
+                                    <option value="10">22</option>
+                                    <option value="10">23</option>
+
+                                </select>
                             </div>
                              <div style="margin-bottom:10px">
-                                <input class="easyui-textbox" id="remarks" name="remarks" style="width:100%;height:90px" data-options="label:'Tool Time Remarks:', multiline:true" required="true" value="for PM" labelPosition="top">
+                                <input class="easyui-textbox" id="remarks" name="remarks" style="width:100%;height:70px" data-options="label:'Remarks:', multiline:true" required="true" labelPosition="top">
                             </div>
                         </form>
                     </div>

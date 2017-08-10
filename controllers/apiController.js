@@ -168,7 +168,7 @@ module.exports = function(app){
                             
                         //  query
                     connection.query({
-                        sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "06:00:00" && stime <= CURTIME() THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE  process_name = ?',
+                        sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "06:30:00" && stime <= CURTIME() THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE  process_name = ?',
                         values: [process]
                             },  function(err, results, fields){
                                 if (err) return reject(err);
@@ -221,16 +221,37 @@ module.exports = function(app){
         //  aggregate multiple promises 
         Promise.all([hourlyTargetPromise, hourlyOutsPromise]).then(function(values){
 
-           var process = req.params.process_url;
+           var process = req.params.process_url;    //  path
 
-           var data = values;
+           var data = values;         //    to variable
 
-           var variance = data[0]['processTarget'][0] - data[1]['processOuts'][0];
+                //  subtract to get the variance
+                var variance = data[0]['processTarget'][0] - data[1]['processOuts'][0];
+                
 
-           data["variance"] = [variance];
-        
+                if (variance <= 0) { 
+                        //  swap outs at first to avoid negative
+                        var variance = (data[1]['processOuts'][0] - data[0]['processTarget'][0]).toLocaleString(undefined, {maximumFractionDigits: 0});
+
+                        data["variance"] = [variance];
+
+                } else {
+                        //  to have comma
+                        var variance = (data[0]['processTarget'][0] - data[1]['processOuts'][0]).toLocaleString(undefined, {maximumFractionDigits: 0});
+                        
+                        
+                        var ggTarget = (data[0]['processTarget'][0]).toLocaleString(undefined,              {maximumFractionDigits: 0});
+
+                        var ggOuts = (data[1]['processOuts'][0]).toLocaleString(undefined, {maximumFractionDigits: 0}); 
+
+                        // combine the values with comma
+                        data["variance"] = [variance];
+                        data["ggTarget"] = [ggTarget];
+                        data["ggOuts"] = [ggOuts];
+                }
+            
            //combine all resolve data to be render
-           res.render(process, {data} );
+            res.render(process, {data} );
         });
 
 
@@ -353,7 +374,7 @@ module.exports = function(app){
         poolLocal.getConnection(function(err, connection){
             
             connection.query({
-                sql: 'SELECT A.process_id, C.process_name, A.today_date, A.stime, round(CASE WHEN A.stime = "06:00:00" || A.stime = "18:00:00" THEN (((B.oee / 100) * B.uph * B.num_tool)/2) ELSE ((B.oee / 100) * B.uph * B.num_tool) END) AS default_target, round((B.oee / 100) * B.uph * A.toolpm) AS adjusted_target, round((CASE WHEN A.stime = "06:00:00" || A.stime = "18:00:00" THEN (((B.oee / 100) * B.uph * B.num_tool)/2) ELSE ((B.oee / 100) * B.uph * B.num_tool) END) - ((B.oee / 100) * B.uph * A.toolpm)) AS total_target FROM tbl_target_input A JOIN tbl_target_default B ON A.process_id = B.process_id JOIN tbl_target_process C ON A.process_id = C.process_id WHERE today_date = curdate()',
+                sql: 'SELECT A.process_id,C.process_name,A.today_date,A.stime,A.ntime,round(((B.oee / 100) * B.uph * B.num_tool)/2) AS default_target,round((B.oee / 100) * B.uph * A.toolpm) AS adjusted_target,round((((B.oee / 100) * B.uph * B.num_tool)/2) - ((B.oee / 100) * B.uph * A.toolpm)) AS total_target,A.remarks FROM tbl_target_input A  JOIN tbl_target_default B ON A.process_id = B.process_id   JOIN tbl_target_process C ON A.process_id = C.process_id WHERE today_date = curdate()',
             },  function(err, results, fields){
                 if (err) throw err;
                 
@@ -366,6 +387,7 @@ module.exports = function(app){
                                 process_name:   results[i].process_name,
                                 today_date:     new Date(results[i].today_date),
                                 stime:          results[i].stime,
+                                ntime:          results[i].ntime,
                                 default_target: results[i].default_target,
                                 adjusted_target:results[i].adjusted_target,
                                 total_target:   results[i].total_target,
@@ -459,7 +481,7 @@ module.exports = function(app){
 
                //   instead of adding literal values, UPDATE!
                 connection.query({
-                    sql: 'UPDATE tbl_target_input SET toolpm = ? , remarks = ? WHERE today_date = ? AND process_id = ? AND stime >= ? && stime <= ? ',
+                    sql: 'UPDATE tbl_target_input SET toolpm = ? , remarks = ? WHERE today_date = ? AND process_id = ? AND stime >= ? && stime < ? ',
                     values: [req.body.toolpm, req.body.remarks, new Date(req.body.today_date), req.body.process_id, req.body.stime, req.body.etime]
                 },  function(err, results, fields){
                     if (err) throw err;

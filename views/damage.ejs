@@ -5,9 +5,19 @@
 
 <script src="//d3js.org/d3.v4.0.0-alpha.9.min.js"></script>
 
-<div class="viewContainer"></div>
-
-<div class="viewContainer container">
+  <div class="row">
+    <div class="wrap"> 
+      <%= data.ggTarget %>
+    </div>
+    <div class="wrap">
+      <%= data.ggOuts %>
+    </div>
+    <div class="wrap">
+      
+      <%= data.variance %>
+    
+    </div>
+  </div>
 
   <div class="row">
     <div class="wrap">Target</div>
@@ -15,32 +25,14 @@
     <div class="wrap">Variance</div>
   </div>
 
-  <div class="row">
-    <div class="wrap"> 
-      <% data.forEach(function(gg) { %>
-      <%= gg.processTarget %>
-      <%}); %>
-    </div>
-    <div class="wrap">
-      <% data.forEach(function(gg) { %>
-      <%= gg.processOuts %>
-      <%}); %>
-    </div>
-    <div class="wrap">
-      
-      <%= data.variance %>
-      
-      
-    </div>
-  </div>
+
 
 
   <div class="outscrapChart"> 
-      <svg class ="svgChart" width="1100" height="500"></svg>
+      <svg class ="svgChart" width="1200" height="550"></svg>
       <script type ='text/javascript' src="/damage.js"></script>
   </div>
 
-</div>
 
 <script type = 'text/javascript'>
 var theUrl = '/hourly/damage';
