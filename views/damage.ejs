@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-  <title>Damage</title>
+  <title>DAMAGE</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="120" >
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -27,43 +28,49 @@
 <div class="columnPanel">
   <div class="col-sm-4"> 
       <div class="target-title section">
-          <div class="sectionHeader"><h4>Target<h4></div>
-          <div class="sectionContent"><h1><%= data.ggTarget %></h1></div>
+          <div class="sectionHeader"><h3>Target<h3></div>
+          <div class="sectionContentTarget"><%= data.ggTarget %></div>
           <div class="sectionFooter" id ="targetDate"></div>
       </div>
   </div>
     
   <div class="col-sm-4">
       <div class="target-title section">
-          <div class="sectionHeader"><h4>Actual Outs<h4></div>
-          <div class="sectionContent"><h1><%= data.ggOuts %></h1></div>
+          <div class="sectionHeader"><h3>Actual Outs<h3></div>
+          <div class="sectionContentOut"><%= data.ggOuts %></div>
           <div class="sectionFooter" id ="outsDate"></div>
       </div>
   </div>
     
   <div class="col-sm-4">
     <div class="target-title section">
-          <div class="sectionHeader"><h4>Variance<h4></div>
-          <div class="sectionContent"><h1><%= data.variance %></h1></div>
+          <div class="sectionHeader"><h3>Variance<h3></div>
+          <div class="sectionContentVar"><%= data.variance %></div>
           <div class="sectionFooter" id ="varDate"></div>
       </div>
   </div>
 </div>
 
   <div class="col-sm-12">
-    <div class="outscrapChart section"> 
-      <svg class ="svgChart" width="1200" height="440"></svg>
+    <div class="outscrapChart sectionChart">
+      <svg class ="svgChart" width="1500" height="400"></svg>
       <script type ='text/javascript' src="/damage.js"></script>
+      <div class="sectionChart scrapLabelDiv">Scrap DPPM</div>
+      <div class="sectionChart hourlyLabelDiv">Hourly Outs</div>
     </div>
   </div>
 
+<script>
+    $(".sectionContentVar:contains('+')").addClass("green");
+    $(".sectionContentVar:contains('-')").addClass("red");
+</script>
 
 <script>
     var today =  new Date();
     var MS_PER_MINUTE = 60000;
     var DELAYmin = 10;
     var todayMinus10min = new Date(today - (DELAYmin * MS_PER_MINUTE));
-    document.getElementById("targetDate").innerHTML = today.toDateString() + ' ' + today.toLocaleTimeString();  
+    document.getElementById("targetDate").innerHTML = today.toDateString() + ' ' + todayMinus10min.toLocaleTimeString();  
     document.getElementById("outsDate").innerHTML = today.toDateString() + ' ' + todayMinus10min.toLocaleTimeString();
-    document.getElementById("varDate").innerHTML = today.toDateString() + ' ' + today.toLocaleTimeString();  
+    document.getElementById("varDate").innerHTML = today.toDateString() + ' ' + todayMinus10min.toLocaleTimeString();  
 </script>

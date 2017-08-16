@@ -24,7 +24,7 @@ module.exports = function(app){
     //  need to encrypt this.
     var pool = mysql.createPool({
         multipleStatements: true,
-        connectionLimit:    100, //try for now
+        connectionLimit:    10000000000000000000000000000000, //try for now :))
         host    :           'ddolfsb30gea9k.c36ugxkfyi6r.us-west-2.rds.amazonaws.com',
         user    :           'fab4_engineers',
         password:           'Password123',
@@ -34,7 +34,7 @@ module.exports = function(app){
 
     var poolLocal = mysql.createPool({
         multipleStatements: true,
-        connectionLimit:    100, //try for now
+        connectionLimit:    10000000000000000000000000000000, //try for now :))
         host    :           'localhost',
         user    :           'root',
         password:           '2qhls34r',
@@ -162,28 +162,37 @@ module.exports = function(app){
         
             // promise 1
             var hourlyTargetPromise = new Promise (function(resolve, reject){
-                    
+
                 //  local database
                 poolLocal.getConnection(function(err, connection){
+                    if (err) throw err;
+                    //  will check the AM and PM 
+                    if (checker >= check_am_start && checker <= check_am_end) {
                             
                         //  query
-                    connection.query({
-                        sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "06:30:00" && stime <= CURTIME() THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE  process_name = ?',
-                        values: [process]
-                            },  function(err, results, fields){
-                                if (err) return reject(err);
+                        connection.query({
+                            sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "06:30:00" && stime < CURTIME() - INTERVAL 10 MINUTE THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE process_name = ?',
+                            values: [process]
+                                },  function(err, results, fields){
+                                    if (err) return reject(err);
 
-                                var processTarget = [];
-                                    processTarget.push(
-                                        results[0].t_target
-                                    );                 
+                                    var processTarget = [];
+                                        processTarget.push(
+                                            results[0].t_target
+                                        );                 
 
-                                resolve({processTarget: processTarget});
-                                
-                    });
+                                    resolve({processTarget: processTarget});
+                                    
+                        });
+                    
+                    }else {
+                    
+                    //  pm shift
+
+                    }
 
                 }); 
-
+                
             });
         
             //  promise 2
@@ -191,7 +200,7 @@ module.exports = function(app){
 
                 //   systems database
                 pool.getConnection(function(err, connection){
-                
+                    if (err) throw err;
                     //  will check the AM and PM 
                     if (checker >= check_am_start && checker <= check_am_end) {
 
@@ -213,9 +222,27 @@ module.exports = function(app){
                             });
 
                         }else{
-                        // pm shift here...
+                            // pm shift here...
+                            // for total outs
+                            connection.query({
+                                sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 06:30:00") AND date_time <= CONCAT("' + today + ' "," 18:29:59")',
+                                values: [process]
+                                },  function(err, results, fields){
+                                    if (err) return reject(err);
+
+                                    var processOuts = [];
+
+                                        processOuts.push(
+                                            results[0].totalOuts
+                                        );
+
+                                    resolve({processOuts: processOuts});
+
+                            });            
                     }
+
                 });
+
             });
 
         //  aggregate multiple promises 
@@ -225,39 +252,88 @@ module.exports = function(app){
 
            var data = values;         //    to variable
 
-                //  subtract to get the variance
-                var variance = data[0]['processTarget'][0] - data[1]['processOuts'][0];
-                
-
-                if (variance <= 0) { 
-                        //  swap outs at first to avoid negative
-                        var variance = (data[1]['processOuts'][0] - data[0]['processTarget'][0]).toLocaleString(undefined, {maximumFractionDigits: 0});
-
-                        data["variance"] = [variance];
-
-                } else {
-                        //  to have comma
-                        var variance = (data[0]['processTarget'][0] - data[1]['processOuts'][0]).toLocaleString(undefined, {maximumFractionDigits: 0});
+                    //  subtract to get the variance
+                    var variance = data[0]['processTarget'][0] - data[1]['processOuts'][0];
+                    
+                    //  this is to make variance negative
+                    if (variance > 0) { 
                         
+                        //  this is to check if the value is null then make the variable zero
+                        if (data[0]['processTarget'][0] !== null) {
+
+                            var ggTarget = (data[0]['processTarget'][0]).toLocaleString(undefined,              {maximumFractionDigits: 0});
+                        } else {
+                            
+                            var ggTarget = 0;
+                        }
+
+                        if (data[1]['processOuts'][0] !== null) {
+
+                            var ggOuts = (data[1]['processOuts'][0]).toLocaleString(undefined, {maximumFractionDigits: 0}); 
+                        } else {
+                            
+                            var ggOuts = 0;
+                        }
+
+                        if (data[0]['processTarget'][0] !== null && data[1]['processOuts'][0] !== null) {
+                            
+                            var variance = (data[1]['processOuts'][0] - data[0]['processTarget'][0]).toLocaleString(undefined, {maximumFractionDigits: 0});
+                            
+                            // combine the values with comma
+                                data["variance"] = [variance];
+                                
+                        } else {
+                            var variance = 0;
+                        }
+                    
+                                
+                                data["ggTarget"] = [ggTarget];
+                                data["ggOuts"] = [ggOuts];
+
+                    } else {
                         
-                        var ggTarget = (data[0]['processTarget'][0]).toLocaleString(undefined,              {maximumFractionDigits: 0});
+                        //  this is to check if the value is null then make the variable zero
+                        if (data[0]['processTarget'][0] !== null) {
 
-                        var ggOuts = (data[1]['processOuts'][0]).toLocaleString(undefined, {maximumFractionDigits: 0}); 
+                            var ggTarget = (data[0]['processTarget'][0]).toLocaleString(undefined,              {maximumFractionDigits: 0});
+                        } else {
+                            
+                            var ggTarget = 0;
+                        }
 
-                        // combine the values with comma
-                        data["variance"] = [variance];
-                        data["ggTarget"] = [ggTarget];
-                        data["ggOuts"] = [ggOuts];
-                }
+                        if (data[1]['processOuts'][0] !== null) {
+
+                            var ggOuts = (data[1]['processOuts'][0]).toLocaleString(undefined, {maximumFractionDigits: 0}); 
+                        } else {
+                            
+                            var ggOuts = 0;
+                        }
+
+                        if (data[0]['processTarget'][0] !== null && data[1]['processOuts'][0] !== null) {
+                            
+                            
+                            var variance = '+' + (data[1]['processOuts'][0] - data[0]['processTarget'][0]).toLocaleString(undefined, {maximumFractionDigits: 0});
+
+                            // combine the values with comma
+                                data["variance"] = [variance];
+                        } else {
+
+                            var variance = 0;
+                        }
+                    
+                                
+                                data["ggTarget"] = [ggTarget];
+                                data["ggOuts"] = [ggOuts];
+                    }
             
-           //combine all resolve data to be render
+           //combine all resolve data to be render into front end at once
             res.render(process, {data} );
         });
 
 
        //   systems database
         pool.getConnection(function(err, connection){
-           
+           if (err) throw err;
             //  will check the AM and PM 
             if (checker >= check_am_start && checker <= check_am_end) {
   
@@ -372,9 +448,10 @@ module.exports = function(app){
     app.get('/api/view', function(req, res){
 
         poolLocal.getConnection(function(err, connection){
-            
+            if (err) throw err;
+
             connection.query({
-                sql: 'SELECT A.process_id,C.process_name,A.today_date,A.stime,A.ntime,round(((B.oee / 100) * B.uph * B.num_tool)/2) AS default_target,round((B.oee / 100) * B.uph * A.toolpm) AS adjusted_target,round((((B.oee / 100) * B.uph * B.num_tool)/2) - ((B.oee / 100) * B.uph * A.toolpm)) AS total_target,A.remarks FROM tbl_target_input A  JOIN tbl_target_default B ON A.process_id = B.process_id   JOIN tbl_target_process C ON A.process_id = C.process_id WHERE today_date = curdate()',
+                sql: 'SELECT * FROM view_api WHERE today_date >= CURDATE() AND adjusted_target != "0"',
             },  function(err, results, fields){
                 if (err) throw err;
                 
@@ -413,7 +490,8 @@ module.exports = function(app){
     // update data
     app.post('/api/update', function(req, res){
         poolLocal.getConnection(function(err, connection){
-            
+            if (err) throw err;
+
             if(req.body.id) {
 
                 //  need to dis to align the jeasyui datetime with my format
@@ -445,6 +523,7 @@ module.exports = function(app){
     //  add tool time data
     app.post('/api/add', function(req, res){
         poolLocal.getConnection(function(err, connection){
+            if (err) throw err;
 
             if(req.body.process_id){
 
@@ -514,6 +593,7 @@ module.exports = function(app){
     //  delete tool time data using id
     app.post('/api/delete', function(req, res){
         poolLocal.getConnection(function(err, connection){
+            if (err) throw err;
 
             connection.query({
                 sql: 'DELETE FROM tbl_target_view WHERE id=?',

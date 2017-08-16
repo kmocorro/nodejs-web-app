@@ -1,30 +1,76 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+  <title>FGA</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="120" >
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <body>
 <link rel= "stylesheet" href="/style.css">
 
 <script src="//d3js.org/d3.v4.0.0-alpha.9.min.js"></script>
 
-<div class="viewContainer"></div>
-
-<div class="viewContainer container">
-
-  <div class="row">
-    <div class="wrap">Target</div>
-    <div class="wrap">Outs</div>
-    <div class="wrap">Variance</div>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">F G A</a>
+    </div>
+    <ul class="nav navbar-nav">
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#"><span class="glyphicon glyphicon-user"></span> Andon Board Monitoring</a></li>
+    </ul>
   </div>
+</nav>
 
-  <div class="row">
-    <div class="wrap">--</div>
-    <div class="wrap"><%= processOuts %></div>
-    <div class="wrap">--</div>
+<div class="columnPanel">
+  <div class="col-sm-4"> 
+      <div class="target-title section">
+          <div class="sectionHeader"><h3>Target<h3></div>
+          <div class="sectionContentTarget"><%= data.ggTarget %></div>
+          <div class="sectionFooter" id ="targetDate"></div>
+      </div>
   </div>
-
-
-  <div class="outscrapChart"> 
-      <svg class ="svgChart" width="1100" height="500"></svg>
-      <script type ='text/javascript' src="/fga.js"></script>
+    
+  <div class="col-sm-4">
+      <div class="target-title section">
+          <div class="sectionHeader"><h3>Actual Outs<h3></div>
+          <div class="sectionContentOut"><%= data.ggOuts %></div>
+          <div class="sectionFooter" id ="outsDate"></div>
+      </div>
   </div>
-
+    
+  <div class="col-sm-4">
+    <div class="target-title section">
+          <div class="sectionHeader"><h3>Variance<h3></div>
+          <div class="sectionContentVar"><%= data.variance %></div>
+          <div class="sectionFooter" id ="varDate"></div>
+      </div>
+  </div>
 </div>
+
+  <div class="col-sm-12">
+    <div class="outscrapChart sectionChart">
+      <svg class ="svgChart" width="1500" height="400"></svg>
+      <script type ='text/javascript' src="/fga.js"></script>
+      <div class="sectionChart scrapLabelDiv">Scrap DPPM</div>
+      <div class="sectionChart hourlyLabelDiv">Hourly Outs</div>
+    </div>
+  </div>
+
+<script>
+    $(".sectionContentVar:contains('+')").addClass("green");
+    $(".sectionContentVar:contains('-')").addClass("red");
+</script>
+
+<script>
+    var today =  new Date();
+    var MS_PER_MINUTE = 60000;
+    var DELAYmin = 10;
+    var todayMinus10min = new Date(today - (DELAYmin * MS_PER_MINUTE));
+    document.getElementById("targetDate").innerHTML = today.toDateString() + ' ' + todayMinus10min.toLocaleTimeString();  
+    document.getElementById("outsDate").innerHTML = today.toDateString() + ' ' + todayMinus10min.toLocaleTimeString();
+    document.getElementById("varDate").innerHTML = today.toDateString() + ' ' + todayMinus10min.toLocaleTimeString();  
+</script>
