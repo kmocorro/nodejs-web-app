@@ -323,10 +323,9 @@ module.exports = function(app){
 
                             var variance = 0;
                         }
-                    
                                 
-                                data["ggTarget"] = [ggTarget];
-                                data["ggOuts"] = [ggOuts];
+                            data["ggTarget"] = [ggTarget];
+                            data["ggOuts"] = [ggOuts];
                     }
             
            //combine all resolve data to be render into front end at once
