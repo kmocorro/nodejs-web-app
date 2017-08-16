@@ -24,7 +24,7 @@ module.exports = function(app){
     //  need to encrypt this.
     var pool = mysql.createPool({
         multipleStatements: true,
-        connectionLimit:    10000000000000000000000000000000, //try for now :))
+        connectionLimit:    100, //try for now :))
         host    :           'ddolfsb30gea9k.c36ugxkfyi6r.us-west-2.rds.amazonaws.com',
         user    :           'fab4_engineers',
         password:           'Password123',
@@ -34,7 +34,7 @@ module.exports = function(app){
 
     var poolLocal = mysql.createPool({
         multipleStatements: true,
-        connectionLimit:    10000000000000000000000000000000, //try for now :))
+        connectionLimit:    100, //try for now :))
         host    :           'localhost',
         user    :           'root',
         password:           '2qhls34r',
@@ -192,6 +192,7 @@ module.exports = function(app){
                     }
 
                 }); 
+
                 
             });
         
@@ -242,6 +243,8 @@ module.exports = function(app){
                     }
 
                 });
+
+                
 
             });
 
@@ -328,6 +331,7 @@ module.exports = function(app){
             
            //combine all resolve data to be render into front end at once
             res.render(process, {data} );
+            
         });
 
 
@@ -423,7 +427,10 @@ module.exports = function(app){
                             fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
                                 if (err) throw err;
                             });
-                    
+
+                          // remove connection
+                            connection.release();
+
                            // res.render(process);
                         });
 
@@ -480,10 +487,16 @@ module.exports = function(app){
                     fs.writeFile('./public/view.json', JSON.stringify(obj), 'utf8', function(err){
                         if (err) throw err;
                     });
+                    
 
             });
 
+        // remove connection
+        connection.release();
+
         });
+
+        
 
     });
 
@@ -515,8 +528,13 @@ module.exports = function(app){
             } else {
                 console.log('something is wrong');
             }
+
+        // remove connection
+        connection.release();
             
         });
+
+        
 
     });
         
@@ -584,29 +602,16 @@ module.exports = function(app){
                 console.log('error');
                 console.log(req.body.process_id);
             }
+
+        // remove connection
+        connection.release();
        
         });
+
+        
     
     });
 
-
-    //  delete tool time data using id
-    app.post('/api/delete', function(req, res){
-        poolLocal.getConnection(function(err, connection){
-            if (err) throw err;
-
-            connection.query({
-                sql: 'DELETE FROM tbl_target_view WHERE id=?',
-                values: [req.body.id]
-            },  function(err, results, fields){
-                if (err) throw err;
-
-                console.log('ID: ' + req.body.id + ' has been deleted!');
-                res.redirect('back');
-            });
-
-        });
-    });
 
 
     //  Settings
@@ -644,7 +649,13 @@ module.exports = function(app){
                 });  
 
             });
+
+        // remove connection
+        connection.release();
+
         });
+
+        
     });
 
     //  SETTINGS edit button
@@ -670,10 +681,14 @@ module.exports = function(app){
             }else{
                 console.log('settings/update api error')
             }
-            
+        
+        // remove connection
+        connection.release();
 
 
         });
+
+        
 
     });
 }
