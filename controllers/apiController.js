@@ -186,10 +186,28 @@ module.exports = function(app){
                         });
                     
                     }else {
-                    
                     //  pm shift
+                        //  dont forget the 00:00:00 if statement
+                        //  query
+                        connection.query({
+                            sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "18:30:00" && stime < CURTIME() - INTERVAL 10 MINUTE THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE process_name = ?',
+                            values: [process]
+                                },  function(err, results, fields){
+                                    if (err) return reject(err);
+
+                                    var processTarget = [];
+                                        processTarget.push(
+                                            results[0].t_target
+                                        );                 
+
+                                    resolve({processTarget: processTarget});
+                                    
+                        });
 
                     }
+
+                    //  release
+                    connection.release();
 
                 }); 
 
@@ -241,6 +259,9 @@ module.exports = function(app){
 
                             });            
                     }
+
+                    //  release
+                    connection.release();
 
                 });
 
