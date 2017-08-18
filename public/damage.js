@@ -1,4 +1,4 @@
-var parseTime = d3.timeParse("%H:%M");
+var parseTime = d3.timeParse("%Y-%m-%d %H:%M");
 
 var svg = d3.select("svg");
 
@@ -32,7 +32,11 @@ d3.requestTsv("/damage.tsv", function(d) {
       .range([0, width]);
 
   var y = d3.scaleLinear()
-      .domain([0, d3.max(series, function(s) { return d3.max(s, function(d) { return d.value; }); })])
+      .domain([0, d3.max(series, function(s) {
+           return d3.max(s, function(d) {
+                return d.value; 
+            }); 
+        })])
       .range([height, 0]);
 
   var z = d3.scaleCategory10();

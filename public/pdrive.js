@@ -1,4 +1,4 @@
-var parseTime = d3.timeParse("%H:%M");
+var parseTime = d3.timeParse("%Y-%m-%d %H:%M");
 
 var svg = d3.select("svg");
 
