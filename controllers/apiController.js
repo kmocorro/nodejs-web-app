@@ -3,7 +3,7 @@ var mysql = require('mysql');
 var moment = require('moment');
 var fs = require('fs');
 var TSV = require('tsv');
-
+var json2csv = require('json2csv');
 
 //  export
 module.exports = function(app){
@@ -164,7 +164,7 @@ module.exports = function(app){
 
 
     // http request hourly outs per process
-    app.get('/hourly/:process_url', function(req, res, next){
+    app.get('/hourly/:process_url', function(req, res){
         
         //  parse process url
         var process = req.params.process_url;   
@@ -325,16 +325,23 @@ module.exports = function(app){
                 
 
             });
+        
 
-        //  aggregate multiple promises 
+        // aggregate multiple promises 
         Promise.all([hourlyTargetPromise, hourlyOutsPromise]).then(function(values){
 
            var process = req.params.process_url;    //  path
 
+           console.log(values);
+
            var data = values;         //    to variable
+
+           console.log(data);
 
                     //  subtract to get the variance
                     var variance = data[0]['processTarget'][0] - data[1]['processOuts'][0];
+
+                    console.log(variance);
                     
                     //  this is to make variance negative
                     if (variance > 0) { 
@@ -408,10 +415,11 @@ module.exports = function(app){
                             data["ggOuts"] = [ggOuts];
                     }
             
+            
            //combine all resolve data to be render into front end at once
             res.render(process, {data} );
             
-        });
+        }); 
 
 
        //   systems database
@@ -501,9 +509,25 @@ module.exports = function(app){
                             
                             // stringify obj to TSV
                             var processHourly_tsv = TSV.stringify(obj);
-        
+
                             //  create .tsv per request
                             fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
+                                if (err) throw err;
+                            });
+
+
+                            //  json2csv 
+                            var fields = ['hours', 'outs', 'dppm'];
+                            var gg = {
+                                data: obj,
+                                fields: fields,
+                                quotes: ''
+                            };
+                            
+                            var processHourly_csv = json2csv(gg);
+                            console.log(processHourly_csv);
+                            //  create .csv 
+                            fs.writeFile('./public/' + process + '.csv', processHourly_csv, function(err){
                                 if (err) throw err;
                             });
 

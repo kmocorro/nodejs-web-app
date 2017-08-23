@@ -20,7 +20,8 @@
 }
 
 text {
-  font: 14px sans-serif;
+  font: 16px sans-serif;
+  font-weight: 600;
 }
 
 .axis path,
@@ -131,7 +132,6 @@ body {
 }
 
 .hourlyLabelDiv{
-    position: relative;
     border-radius: 0px;
     -webkit-box-shadow: 0px;
     box-shadow: 0px;
@@ -148,7 +148,6 @@ body {
 }
 
 .scrapLabelDiv{
-    position: relative;
     border-radius: 0px;
     -webkit-box-shadow: 0px;
     box-shadow: 0px;
@@ -157,7 +156,7 @@ body {
     padding: 5px 5px 5px;
     bottom: 200px;
     max-width: 100%;
-    float: left;
+    float: right;
     color: #ff7f0e;
     font-size: 20px;
     font-weight: 700;
