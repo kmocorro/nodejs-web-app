@@ -364,7 +364,9 @@ module.exports = function(app){
                                 data["variance"] = [variance];
                                 
                         } else {
+                           
                             var variance = 0;
+                           // var variance = (data[0]['processTarget'][0] - data[1]['processOuts'][0]).toLocaleString(undefined, {maximumFractionDigits: 0});
                         }
                     
                                 

@@ -164,6 +164,10 @@ body {
     
 }
 
+.menuPanel {
+    background-color: #2C2E2F;
+}
+
 
 .separator {
     border-top: 1px solid #cbd2d6;
@@ -171,6 +175,14 @@ body {
     margin: 5px 0 5px;
     text-align: center;
 }
+
+.whiteSeparator {
+    border-top: 1px solid #fff;
+    position: relative;
+    margin: 5px 0 5px;
+    text-align: center;
+}
+
 .textseparator {
     background-color: #fff;
     padding: 0 .5em;
@@ -183,6 +195,7 @@ a, a:link, a:visited {
     color: #0070ba;
     font-family: HelveticaNeue,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight: 400;
+    font-size: 14px;
     text-decoration: none;
     -webkit-transition: color .2s ease-out;
     -moz-transition: color .2s ease-out;

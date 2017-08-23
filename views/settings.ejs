@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Settings</title>
-    <link rel="stylesheet" type="text/css" href="./themes/material/easyui.css">
+    <link rel="stylesheet" type="text/css" href="./themes/metro/easyui.css">
     <link rel="stylesheet" type="text/css" href="./themes/icon.css">
     <link rel="stylesheet" type="text/css" href="./style.css">
-    <script type="text/javascript" src="./jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../bootstrap-3.3.7/dist/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./jquery.easyui.min.js"></script>
   
     
@@ -14,64 +18,72 @@
 <body>
     <div style="padding: 0px;"></div>
     <div class="easyui-layout" style="max-width:100%;height:780px;">
-        <div id="p" data-options="region:'west',split: true" title="Menu" style="width:10%;padding:10px">
-            <a href="/" class="button secondary" >Home</a>
-            <div class="separator"></div>
-            <a href="/settings" class="button secondary"  target="_blank">Settings</a><br/>
-            <div class="separator"><span class="textseparator" aria-label="or">Hourly Outs Monitoring</span></div>
-            <a href="/hourly/damage" class="button tertiary"  target="_blank">DAMAGE</a>
-            <div class="separator"></div>
-            <a href="/hourly/poly" class="button tertiary" target="_blank">POLY</a>
-            <div class="separator"></div>
-            <a href="/hourly/bsgdep" class="button tertiary" target="_blank">BSGDEP</a>
-            <div class="separator"></div>
-            <a href="/hourly/ntm" class="button tertiary"target="_blank">NTM</a>
-            <div class="separator"></div>
-            <a href="/hourly/noxe" class="button tertiary"target="_blank">NOXE</a>
-            <div class="separator"></div>
-            <a href="/hourly/ndep" class="button tertiary"target="_blank">NDEP</a>
-            <div class="separator"></div>
-            <a href="/hourly/ptm" class="button tertiary"target="_blank">PTM</a>
-            <div class="separator"></div>
-            <a href="/hourly/toxe" class="button tertiary"target="_blank">TOXE</a>
-            <div class="separator"></div>
-            <a href="/hourly/cleantex" class="button tertiary" target="_blank">CLEANTEX</a>
-            <div class="separator"></div>
-            <a href="/hourly/pdrive" class="button tertiary" target="_blank">PDRIVE</a>
-            <div class="separator"></div>
-            <a href="/hourly/arc_barc" class="button tertiary" target="_blank">OLT</a>
-            <div class="separator"></div>
-            <a href="/hourly/pba"  class="button tertiary" target="_blank">PBA</a>
-            <div class="separator"></div>
-            <a href="/hourly/lcm" class="button tertiary" target="_blank">LCM</a>
-            <div class="separator"></div>
-            <a href="/hourly/seed" class="button tertiary" target="_blank">SEED</a>
-            <div class="separator"></div>
-            <a href="/hourly/fga" class="button tertiary" target="_blank">FGA</a>
-            <div class="separator"></div>
-            <a href="/hourly/plm" class="button tertiary" target="_blank">PLM</a>
-            <div class="separator"></div>
-            <a href="/hourly/edg_ctr" class="button tertiary" target="_blank">EDGE COAT</a>
-            <div class="separator"></div>
-            <a href="/hourly/plating" class="button tertiary" target="_blank">PLATING</a>
-            <div class="separator"></div>
-            <a href="/hourly/etchbk" class="button tertiary" target="_blank">ETCHBK</a>
-            <div class="separator"></div>
-            <a href="/hourly/hst" class="button tertiary" target="_blank">HST</a>
-            <div class="separator"></div>
-            <a href="/hourly/test" class="button tertiary" target="_blank">TEST</a>
-            <div class="separator"></div>
+        <div id="p" data-options="region:'west',split: true" title="Settings" style="width:20%;padding:10px">
+           <div class="list-group">
+                <a class="list-group-item" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
+                <a class="list-group-item active" href="/settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Tool Settings</a>
+                <!-- Trigger the modal with a -->
+                <a class="list-group-item" href="#" data-toggle="modal" data-target="#myModal">&nbsp;<i class="fa fa-question" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; FAQ</a>
+            </div>
+
+            
+                <div class="separator"><span class="textseparator" aria-label="or"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp; Outs and Scrap Monitoring </span></div>
+
+            <div class="list-group">
+                <a href="/hourly/damage"  class="list-group-item" target="_blank">DAMAGE</a>
+                
+                <a href="/hourly/poly"  class="list-group-item" target="_blank">POLY</a>
+                
+                <a href="/hourly/bsgdep"  class="list-group-item" target="_blank">BSGDEP</a>
+                
+                <a href="/hourly/ntm" class="list-group-item" target="_blank">NTM</a>
+                
+                <a href="/hourly/noxe" class="list-group-item" target="_blank">NOXE</a>
+                
+                <a href="/hourly/ndep" class="list-group-item" target="_blank">NDEP</a>
+                
+                <a href="/hourly/ptm" class="list-group-item" target="_blank">PTM</a>
+                
+                <a href="/hourly/toxe" class="list-group-item" target="_blank">TOXE</a>
+                
+                <a href="/hourly/cleantex"  class="list-group-item" target="_blank">CLEANTEX</a>
+                
+                <a href="/hourly/pdrive"  class="list-group-item" target="_blank">PDRIVE</a>
+                
+                <a href="/hourly/arc_barc"  class="list-group-item" target="_blank">OLT</a>
+                
+                <a href="/hourly/pba"   class="list-group-item" target="_blank">PBA</a>
+                
+                <a href="/hourly/lcm"  class="list-group-item" target="_blank">LCM</a>
+                
+                <a href="/hourly/seed"  class="list-group-item" target="_blank">SEED</a>
+                
+                <a href="/hourly/fga"  class="list-group-item" target="_blank">FGA</a>
+                
+                <a href="/hourly/plm"  class="list-group-item" target="_blank">PLM</a>
+                
+                <a href="/hourly/edg_ctr"  class="list-group-item" target="_blank">EDGE COAT</a>
+                
+                <a href="/hourly/plating"  class="list-group-item" target="_blank">PLATING</a>
+                
+                <a href="/hourly/etchbk"  class="list-group-item" target="_blank">ETCHBK</a>
+                
+                <a href="/hourly/hst"  class="list-group-item" target="_blank">HST</a>
+                
+                <a href="/hourly/test"  class="list-group-item" target="_blank">TEST</a>
+                
+            </div>
             
         </div>
-        <div data-options="region:'center'" title="Admin Panel">
-                    <table id="dg" title="UPH and OEE Adjustment" class="easyui-datagrid" style="max-width:100%;height:100%;"
+        <div data-options="region:'center'" title="UPH, OEE and number of Tools">
+                    <table id="dg" title="" class="easyui-datagrid" style="max-width:100%;height:100%;"
                             url="/settings/view"
                             method="get"
                             toolbar="#toolbar"
                             rownumbers="true" fitColumns="true" singleSelect="true">
                     <thead>
                         <tr>
-                            <th field="id" width="10">Tid</th>
+                            <th field="id" width="5">Tid</th>
                             <th field="process_name" width="30">Process Name</th>
                             <th field="uph" width="10">UPH</th>
                             <th field="oee" width="10">OEE</th>
@@ -81,7 +93,9 @@
                     </table>
                     <div id="toolbar">
                         <!--<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newToolTime()">New</a>-->
-                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editToolTime()">Edit</a>
+                        <div  class="list-group" >
+                            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editToolTime()" data-toggle="tooltip" title="Select Process you want to edit and then Click Edit"  >Edit</a>
+                        </div>
                         <!--<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyToolTime()">Delete</a>-->
                     </div>
                     
@@ -142,6 +156,7 @@
                     <!---->
                     <div id="editToolTime" class="easyui-dialog" style="width:400px"
                             closed="true" buttons="#editToolTime-buttons">
+                            <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">Edit UPH, OEE and number of Tools</div> 
                         <form id="fmuph" method="post" novalidate style="margin:0;padding:20px 50px">
 
                             <div style="margin-bottom:10px">
@@ -171,6 +186,12 @@
                         <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#editToolTime').dialog('close')" style="width:90px">Cancel</a>
                     </div>
 
+
+                    <script type="text/javascript">
+                        $(function () {
+                            $("[rel='tooltip']").tooltip();
+                        });
+                    </script>
 
                     <script type="text/javascript">
                         var url;
@@ -246,6 +267,37 @@
                     </script>
 
         </div>
+    </div>
+
+     <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                    <!-- Modal content-->
+             <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">I. How to <strong>Edit</strong> UPH, OEE and number of tools? </h4>
+                    </div>
+                    <div class="modal-body">
+                        <ol>
+                            <li>Select <strong>(1) one</strong> of the processes that you want to edit inside the panel</li>
+                            <li> then Click <strong>Edit</strong> button
+                                <br>
+                                <i>(Note: Clicking the Edit button first will not show any pop-up boxes)</i></li>
+                            <li>Enter/Edit number of <strong>Tools</strong> based on your selected Process</li>
+                            <li>Enter/Edit <strong>Tool UPH</strong> based on IE record</li>
+                            <li>Enter/Edit <strong>OEE</strong> based on the Target OEE of your selected Process</li>
+                            <li>Click <strong>Save</strong></li>
+                            
+                        </ol>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
     </div>
 </body>
 </html>
