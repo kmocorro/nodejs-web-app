@@ -2,7 +2,7 @@ var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var moment = require('moment');
 var fs = require('fs');
-var TSV = require('tsv');
+
 var json2csv = require('json2csv');
 
 //  export
@@ -80,8 +80,8 @@ module.exports = function(app){
         var check_exact_midnight = moment(today + " " + "00:00:00", "YYYY-MM-DD h:mm:ss");    
         var check_pm_end = moment(today + " " + "06:29:59", "YYYY-MM-DD h:mm:ss" );
 
-
-    // api
+    /*
+    // api not yet needed
     // http request total outs per process
     app.get('/outs/:process_id', function(req, res){
 
@@ -160,7 +160,7 @@ module.exports = function(app){
 
         
     });
-
+    */
 
 
     // http request hourly outs per process
@@ -508,12 +508,12 @@ module.exports = function(app){
                                     );
                             
                             // stringify obj to TSV
-                            var processHourly_tsv = TSV.stringify(obj);
+                            // var processHourly_tsv = TSV.stringify(obj);
 
                             //  create .tsv per request
-                            fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
-                                if (err) throw err;
-                            });
+                            //fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
+                            //    if (err) throw err;
+                            //});
 
 
                             //  json2csv 
@@ -619,11 +619,19 @@ module.exports = function(app){
                                             
                                         );
                                 
-                                // stringify obj to TSV
-                                var processHourly_tsv = TSV.stringify(obj);
-            
-                                //  create .tsv per request
-                                fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
+                                
+                                //  json2csv 
+                                var fields = ['hours', 'outs', 'dppm'];
+                                var gg = {
+                                    data: obj,
+                                    fields: fields,
+                                    quotes: ''
+                                };
+                                
+                                var processHourly_csv = json2csv(gg);
+                                console.log(processHourly_csv);
+                                //  create .csv 
+                                fs.writeFile('./public/' + process + '.csv', processHourly_csv, function(err){
                                     if (err) throw err;
                                 });
 
@@ -710,11 +718,18 @@ module.exports = function(app){
                                             
                                         );
                                 
-                                // stringify obj to TSV
-                                var processHourly_tsv = TSV.stringify(obj);
-            
-                                //  create .tsv per request
-                                fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
+                                //  json2csv 
+                                var fields = ['hours', 'outs', 'dppm'];
+                                var gg = {
+                                    data: obj,
+                                    fields: fields,
+                                    quotes: ''
+                                };
+                                
+                                var processHourly_csv = json2csv(gg);
+                                console.log(processHourly_csv);
+                                //  create .csv 
+                                fs.writeFile('./public/' + process + '.csv', processHourly_csv, function(err){
                                     if (err) throw err;
                                 });
 
