@@ -1,13 +1,12 @@
 /*CSS*/
 
 
-.svgChart {
+.svgGraph {
     display: inline-block;
 	position: relative;
-	max-width: 100%;
-	padding-bottom: 0; 
-	vertical-align: middle; 
-    overflow: hidden; 
+    width: 100%;
+    height: 100%;
+    padding-top: 10px;
 }
 
 .outscrapChart {
@@ -98,6 +97,7 @@ body {
     min-height: 150px;
     padding: 7px 15px 15px;
     overflow: auto;
+    
 }
 
 .sectionChart {
@@ -107,9 +107,10 @@ body {
     -webkit-box-shadow: 0 1px 4px rgba(0,0,0,.25);
     box-shadow: 0 1px 4px rgba(0,0,0,.25);
     margin-bottom: 20px;
-    max-height: 100%;
-    padding: 20px 15px 15px;
+    height: 100%;
+    padding: 0 15px 15px;
     overflow: auto;
+    width: 100%;
 }
 
 .sectionHeader {
@@ -137,7 +138,6 @@ body {
     box-shadow: 0px;
     margin-top: 5px;
     max-height: 100%;
-    padding: 5px 5px 5px;
     bottom: 420px;
     right:130px;
     max-width: 100%;
@@ -153,7 +153,6 @@ body {
     box-shadow: 0px;
     margin-top: 5px;
     max-height: 100%;
-    padding: 5px 5px 5px;
     bottom: 200px;
     max-width: 100%;
     float: right;
@@ -270,4 +269,56 @@ a.button, a.button:link, a.button:visited, .button {
 
 .green {
     color: green;
+}
+
+@media only screen and (max-width: 420px) {
+
+   .sectionFooter { 
+      font-size: 0.8em; 
+   }
+
+   .sectionHeader {
+       height: 30px;
+   }
+   .sectionHeader h3{
+      font-size: 1.4em;
+      margin-top: 5px;
+   }
+
+   .sectionContentTarget { 
+      font-size: 1.3em; 
+      font-weight: 700;
+   }
+
+   .sectionContentOut { 
+      font-size: 1.3em; 
+      font-weight: 700;
+   }
+
+   .sectionContentVar { 
+      font-size: 1.3em; 
+      font-weight: 700;
+   }
+
+   .section {
+    background-color: #fff;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,.25);
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+    margin-bottom: 20px;
+    min-height: 0px;
+    padding: 7px 15px 15px;
+    overflow: auto;
+    }
+
+    .col-md-4 {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
+    .col-md-12 {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
 }
