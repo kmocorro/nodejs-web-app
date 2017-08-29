@@ -988,6 +988,40 @@ module.exports = function(app){
         
 
     });
+
+
+    app.get('/mobile/', function(req, res){
+
+        poolLocal.getConnection(function(err, connection){
+            if (err) throw err;
+
+            connection.query({
+                sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "06:30:00" && stime < CURTIME() - INTERVAL 10 MINUTE THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE process_name = "DAMAGE" UNION ALL SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "06:30:00" && stime < CURTIME() - INTERVAL 10 MINUTE THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE process_name = "POLY" ',
+            }, function(err, results, fields){
+                if (err) throw err;
+
+                    var obj = [];
+                    
+
+                    for(i = 0; i< results.length; i++){
+                            
+                                obj.push({
+                                    process_id: results[i].process_id,
+                                    process_name: results[i].process_name ,
+                                    t_target:  results[i].t_target ,
+                                });
+                            
+                    };
+
+                    var GG = {process: obj};
+                
+                res.send(GG);
+
+            });
+            
+        });
+
+    });
 }
 
 

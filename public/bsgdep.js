@@ -1,4 +1,3 @@
-
 var margin = {top: 10, right: 60, bottom: 30, left: 80},
     width = 1320 - margin.left - margin.right,
     height = 380 - margin.top - margin.bottom;
@@ -10,30 +9,51 @@ var y0 = d3.scale.linear().range([height, 0]);
 var y1 = d3.scale.linear().range([height, 0]);
 
 var xAxis = d3.svg.axis().scale(x)
-    .orient("bottom").ticks(5);
+    .orient("bottom").ticks(12);
 
 var yAxisLeft = d3.svg.axis().scale(y0)
-    .orient("left").ticks(5);
+    .orient("left").ticks(8);
 
 var yAxisRight = d3.svg.axis().scale(y1)
-    .orient("right").ticks(5); 
+    .orient("right").ticks(8); 
 
 var valueline = d3.svg.line()
     .x(function(d) { return x(d.hours); })
-    .y(function(d) { return y0(d.outs); });
+    .y(function(d) { 
+
+        // if outs value from csv is 0 then value should be "-"
+        // so the path line will not continue :) 
+        if(d.outs === 0){
+            d.outs = "-"
+            return y0(d.outs);
+        } else {
+            return y0(d.outs);
+        };
+
+     });
     
 var valueline2 = d3.svg.line()
     .x(function(d) { return x(d.hours); })
-    .y(function(d) { return y1(d.dppm); });
+    .y(function(d) { 
+
+        // same with outs logic
+        if(d.dppm === 0){
+            d.dppm = "-"
+            return y1(d.dppm);
+        } else {
+            return y1(d.dppm);
+        };
+
+    });
   
-var svg = d3.select("body")
+// selected div id = svgGG to be inserted inside the DIV
+var svg = d3.select("#svgGG")
     .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .attr("align","center")
+        .attr("class", "svgGraph")
+        .attr("viewBox", "0 0 1300 370")
     .append("g")
         .attr("transform", 
-              "translate(" + margin.left + "," + margin.top + ")");
+              "translate("+60+","+10+")");
 
 // Get the data
 d3.csv("/bsgdep.csv", function(error, data) {

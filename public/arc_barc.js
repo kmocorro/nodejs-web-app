@@ -53,7 +53,7 @@ var svg = d3.select("#svgGG")
         .attr("viewBox", "0 0 1300 370")
     .append("g")
         .attr("transform", 
-              "translate("+70+","+10+")");
+              "translate("+60+","+10+")");
 
 // Get the data
 d3.csv("/arc_barc.csv", function(error, data) {

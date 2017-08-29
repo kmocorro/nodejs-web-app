@@ -13,7 +13,6 @@
     
     font-size: 12px Arial; 
   
-  
   }
 
   path { 
@@ -41,18 +40,19 @@
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">N O X E</a>
+      <a class="navbar-brand" href="#" style="font-size:30px">N O X E</a>
     </div>
-    <ul class="nav navbar-nav">
+    <!--<ul class="nav navbar-nav">
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li><a href="#">Andon Board Monitoring</a></li>
     </ul>
+    -->
   </div>
 </nav>
 
 <div class="columnPanel">
-  <div class="col-sm-4"> 
+  <div class="col-md-4"> 
       <div class="target-title section">
           <div class="sectionHeader"><h3>Target<h3></div>
           <div class="sectionContentTarget"><%= data.ggTarget %></div>
@@ -60,7 +60,7 @@
       </div>
   </div>
     
-  <div class="col-sm-4">
+  <div class="col-md-4">
       <div class="target-title section">
           <div class="sectionHeader"><h3>Actual Outs<h3></div>
           <div class="sectionContentOut"><%= data.ggOuts %></div>
@@ -68,7 +68,7 @@
       </div>
   </div>
     
-  <div class="col-sm-4">
+  <div class="col-md-4">
     <div class="target-title section">
           <div class="sectionHeader"><h3>Variance<h3></div>
           <div class="sectionContentVar"><%= data.variance %></div>
@@ -77,10 +77,15 @@
   </div>
 </div>
 
-  <div class="col-sm-12">
-      <script type ='text/javascript' src="/noxe.js"></script>
-      <div class="scrapLabelDiv">Scrap DPPM</div>
-      <div class="hourlyLabelDiv">Hourly Outs</div>
+  <div class="col-md-12">
+        <div class=" sectionChart section" id="svgGG">
+        
+        <div class="scrapLabelDiv">Scrap DPPM</div>
+        <div class="hourlyLabelDiv">Hourly Outs</div>
+        <script type ='text/javascript' src="/noxe.js"></script>
+        
+      </div>
+      
     </div>
   </div>
 
