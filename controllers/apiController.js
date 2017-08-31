@@ -4,6 +4,8 @@ var moment = require('moment');
 var fs = require('fs');
 
 var json2csv = require('json2csv');
+var csv = require('csv-array');
+
 
 //  export
 module.exports = function(app){
@@ -247,82 +249,27 @@ module.exports = function(app){
         
             //  promise 2
             var hourlyOutsPromise = new Promise (function(resolve, reject){
-
-                //   systems database
-                pool.getConnection(function(err, connection){
-                    if (err) throw err;
-                    //  will check the AM and PM 
-                    if (checker >= check_am_start && checker <= check_am_end) {
-
-                        // for total outs
-                            connection.query({
-                                sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 06:30:00") AND date_time <= CONCAT("' + today + ' "," 18:29:59")',
-                                values: [process]
-                                },  function(err, results, fields){
-                                    if (err) return reject(err);
-
-                                    var processOuts = [];
-
-                                        processOuts.push(
-                                            results[0].totalOuts
-                                        );
-
-                                    resolve({processOuts: processOuts});
-
-                            });
-
-                        }else{
-                            // pm shift here...
-                            // for total outs
-                            if (checker >= check_pm_start && checker <= check_notyet_midnight) {
-                                
-                                console.log('between pm and mid');
-                                
-                                connection.query({
-                                sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 18:30:00") AND date_time <= CONCAT("' + today + ' "," 23:59:59")',
-                                values: [process]
-                                },  function(err, results, fields){
-                                    if (err) return reject(err);
-
-                                    var processOuts = [];
-
-                                        processOuts.push(
-                                            results[0].totalOuts
-                                        );
-
-                                    resolve({processOuts: processOuts});
-
-                                }); 
-
-                            } else if (checker >= check_exact_midnight && checker <= check_pm_end) {
-
-                                console.log('between mid and pm end');
-
-                                connection.query({
-                                sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + todayMinusOne + ' "," 18:30:00") AND date_time <= CONCAT("' + today + ' "," 06:29:59")',
-                                values: [process]
-                                },  function(err, results, fields){
-                                    if (err) return reject(err);
-
-                                    var processOuts = [];
-
-                                        processOuts.push(
-                                            results[0].totalOuts
-                                        );
-
-                                    resolve({processOuts: processOuts});
-
-                                }); 
-                            }
-                                       
-                    }
-
-                    //  release
-                    connection.release();
-
-                });
-
                 
+                //if (err) return reject(err);
+                csv.parseCSV('./public/outs/process_outs.csv', function(data){
+                    
+                    var processOuts = [];
+
+                    for(i=0; i<data.length; i++){
+                        if(data[i].process_id === process.toUpperCase()){
+                            processOuts.push(
+                                
+                                // parsing to INT to add semicolon
+                                parseInt(data[i].totalOuts)
+
+                            );
+
+                        } 
+                    }
+                
+                    resolve({processOuts: processOuts});
+                
+                });
 
             });
         
@@ -331,9 +278,6 @@ module.exports = function(app){
         Promise.all([hourlyTargetPromise, hourlyOutsPromise]).then(function(values){
 
            var process = req.params.process_url;    //  path
-
-           console.log(values);
-
            var data = values;         //    to variable
 
            console.log(data);
@@ -1021,6 +965,30 @@ module.exports = function(app){
             
         });
 
+    });
+
+    app.get('/gg/:process_url', function(req, res){
+
+        var process = req.params.process_url;
+                
+            csv.parseCSV('./public/outs/process_outs.csv', function(data){
+                
+                var processOuts = [];
+
+                for(i=0; i<data.length; i++){
+                    if(data[i].process_id === process.toUpperCase()){
+                        processOuts.push(
+                            data[i].totalOuts
+                        );
+
+                        console.log('it is ' + process + '!');
+                        console.log(processOuts);
+                    } 
+                }
+            
+            resolve({processOuts: processOuts});
+            
+          });
     });
 }
 

@@ -24,7 +24,7 @@ var valueline = d3.svg.line()
         // if outs value from csv is 0 then value should be "-"
         // so the path line will not continue :) 
         if(d.outs === 0){
-            d.outs = "-"
+            d.outs = "0"
             return y0(d.outs);
         } else {
             return y0(d.outs);
@@ -38,7 +38,7 @@ var valueline2 = d3.svg.line()
 
         // same with outs logic
         if(d.dppm === 0){
-            d.dppm = "-"
+            d.dppm = "0"
             return y1(d.dppm);
         } else {
             return y1(d.dppm);
