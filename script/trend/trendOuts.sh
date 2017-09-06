@@ -27,7 +27,7 @@ G_START_PM_SHIFT=`echo $START_PM_SHIFT | awk -F: '{ print ($1 * 3600) + ($2 * 60
 G_END_PM_SHIFT=`echo $END_PM_SHIFT | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }'`
 G_MIDNIGHT=`echo $MIDNIGHT | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }'`
 G_NOTYETMIDNIGHT=`echo $NOTYETMIDNIGHT | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }'`
-G_CURRENT_TIME=`echo $CURRENT_TIME | awk -F: '{ print ($1 * 3600) + ($2 + 60) + $3 }'`
+G_CURRENT_TIME=`echo $CURRENT_TIME | awk -F: '{ print ($1 * 3600) + ($2 * 60) + $3 }'`
 
 # Process Array 
 declare -a arr=("damage" "poly" "bsgdep" "ntm" "noxe" "ndep" "ptm" "toxe" "cleantex" "pdrive" "arc_barc" "pba" "lcm" "seed" "fga" "plm" "edg_ctr" "plating" "etchbk" "hst" "test")
