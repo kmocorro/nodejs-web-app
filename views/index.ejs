@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="./themes/metro/easyui.css">
+    <link rel="stylesheet" type="text/css" href="./themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <link rel="stylesheet" type="text/css" href="./fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../bootstrap-3.3.7/dist/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="./jquery.min.js"></script>
+    <script type="text/javascript" src="./bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./jquery.easyui.min.js"></script>
+
+    <script type="text/javascript">
+    $(window).on('load',function(){
+        setTimeout(function(){
+            $('#newLoad').modal('show');
+        }, 2000);
+    });
+    </script>
+    
+</head>
+<body>
+    <div style="padding: 0px;"></div>
+    <div class="easyui-layout" style="max-width:100%;height:780px;">
+       
+        <div id="p" data-options="region:'west',split: true" title="Dashboard" style="width:20%;padding: 10px 10px 35px;">
+            
+            <div class="list-group">
+                <a class="list-group-item active" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
+                <a class="list-group-item" href="/settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Tool Settings</a>
+                <!-- Trigger the modal with a -->
+                <a class="list-group-item" href="#" data-toggle="modal" data-target="#myModal">&nbsp;<i class="fa fa-question" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp; FAQs</a>
+            </div>
+            
+                <div class="separator"><span class="textseparator" aria-label="or"><i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp; Outs and Scrap Monitoring </span></div>
+
+            <div class="list-group">
+                <a href="/hourly/damage"  class="list-group-item" target="_blank">DAMAGE</a>
+                
+                <a href="/hourly/poly"  class="list-group-item" target="_blank"> POLY</a>
+                
+                <a href="/hourly/bsgdep"  class="list-group-item" target="_blank"> BSGDEP</a>
+                
+                <a href="/hourly/ntm" class="list-group-item" target="_blank"> NTM</a>
+                
+                <a href="/hourly/noxe" class="list-group-item" target="_blank"> NOXE</a>
+                
+                <a href="/hourly/ndep" class="list-group-item" target="_blank"> NDEP</a>
+                
+                <a href="/hourly/ptm" class="list-group-item" target="_blank"> PTM</a>
+                
+                <a href="/hourly/toxe" class="list-group-item" target="_blank"> TOXE</a>
+                
+                <a href="/hourly/cleantex"  class="list-group-item" target="_blank"> CLEANTEX</a>
+                
+                <a href="/hourly/pdrive"  class="list-group-item" target="_blank"> PDRIVE</a>
+                
+                <a href="/hourly/arc_barc"  class="list-group-item" target="_blank"> OLT</a>
+                
+                <a href="/hourly/pba"   class="list-group-item" target="_blank"> PBA</a>
+                
+                <a href="/hourly/lcm"  class="list-group-item" target="_blank"> LCM</a>
+                
+                <a href="/hourly/seed"  class="list-group-item" target="_blank"> SEED</a>
+                
+                <a href="/hourly/fga"  class="list-group-item" target="_blank"> FGA</a>
+                
+                <a href="/hourly/plm"  class="list-group-item" target="_blank"> PLM</a>
+                
+                <a href="/hourly/edg_ctr"  class="list-group-item" target="_blank"> EDGE COAT</a>
+                
+                <a href="/hourly/plating"  class="list-group-item" target="_blank"> PLATING</a>
+                
+                <a href="/hourly/etchbk"  class="list-group-item" target="_blank"> ETCHBK</a>
+                
+                <a href="/hourly/hst"  class="list-group-item" target="_blank"> HST</a>
+                
+                <a href="/hourly/test"  class="list-group-item" target="_blank"> TEST</a>
+                
+            </div>
+        </div>
+        <div data-options="region:'center'" title="Process Tool time" style="padding:10px 20px 30px;">
+                    <table id="dg" title="" class="easyui-datagrid" style="max-width:100%;height:100%;"
+                            url="/viewtarget/"
+                            method="get"
+                            toolbar="#toolbar"
+                            rownumbers="true" fitColumns="true" singleSelect="true">
+                    <thead>
+                        <tr>
+
+                            <th field="process_name" width="12">Process Name</th>
+                            <th field="today_date" width="15">Date</th>
+                            <th field="stime" width="12">Start Time</th>
+                            <th field="ntime" width="12">End Time</th>
+                            <th field="default_target" width="12">Default Target</th>
+                            <th field="adjusted_target" width="12">Affected Outs</th>
+                            <th field="total_target" width="15">Total Target Output</th>
+                            <th field="remarks" width="30">Tool Time Remarks</th>
+                        </tr>
+                    </thead>
+                    </table>
+                    <div id="toolbar">
+                        <div  class="list-group" >
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newToolTime()" data-toggle="tooltip" title="Click to Add / Update Tool Time"  >New / Edit</a>
+                        </div>
+                        
+                        <!--<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editToolTime()">Edit</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyToolTime()">Delete</a> -->
+                    </div>
+                    
+                    <div id="dlg" class="easyui-dialog" style="width:400px"
+                            closed="true" buttons="#dlg-buttons">
+                            
+                        <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px">
+                            <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">Tool Time Information 
+                                <a href="#"  data-toggle="modal" data-target="#myModal" >*</a> 
+                            </div>   
+                             <div style="margin-bottom:10px">
+                                    <select class="easyui-combobox" name="process_id" label="Process:" data-toggle="tooltip" title="Click to Add / Update Tool Time" required="true" labelPosition="top" style="width:100%;height:52px;">
+                                        <option value="101">DAMAGE</option>
+                                        <option value="102">POLY</option>
+                                        <option value="103">BSGDEP</option>
+                                        <option value="104">NTM</option>
+                                        <option value="105">NOXE</option>
+                                        <option value="106">NDEP</option>
+                                        <option value="107">PTM</option>
+                                        <option value="108">TOXE</option>
+                                        <option value="109">CLEANTEX</option>
+                                        <option value="110">PDRIVE</option>
+                                        <option value="111">ARC_BARC</option>
+                                        <option value="112">PBA</option>
+                                        <option value="113">LCM</option>
+                                        <option value="114">SEED</option>
+                                        <option value="115">FGA</option>
+                                        <option value="116">PLM</option>
+                                        <option value="117">EDG_CTR</option>
+                                        <option value="118">PLATING</option>
+                                        <option value="119">ETCHBK</option>
+                                        <option value="120">HST</option>
+                                        <option value="121">VISUAL</option>
+                                        <option value="122">TEST</option>
+                                    </select>
+                             </div>
+                                
+                            
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-datebox" label="Date: (Today)" required ="true" labelPosition="top"  name="today_date" style="width:100%;height:52px;" >
+                            </div>
+
+                            <div style="margin-bottom:10px">
+                                <select class="easyui-combobox" label="Start Time:" required ="true" labelPosition="top"  name="stime" style="width:100%;height:52px;" >
+                                    <option value="06:30:00">06:30:00</option>
+                                    <option value="07:00:00">07:00:00</option>
+                                    <option value="07:30:00">07:30:00</option>
+                                    <option value="08:00:00">08:00:00</option>
+                                    <option value="08:30:00">08:30:00</option>
+                                    <option value="09:00:00">09:00:00</option>
+                                    <option value="09:30:00">09:30:00</option>
+                                    <option value="10:00:00">10:00:00</option>
+                                    <option value="10:30:00">10:30:00</option>
+                                    <option value="11:00:00">11:00:00</option>
+                                    <option value="11:30:00">11:30:00</option>
+                                    <option value="12:00:00">12:00:00</option>
+                                    <option value="12:30:00">12:30:00</option>
+                                    <option value="13:00:00">13:00:00</option>
+                                    <option value="13:30:00">13:30:00</option>
+                                    <option value="14:00:00">14:00:00</option>
+                                    <option value="14:30:00">14:30:00</option>
+                                    <option value="15:00:00">15:00:00</option>
+                                    <option value="15:30:00">15:30:00</option>
+                                    <option value="16:00:00">16:00:00</option>
+                                    <option value="16:30:00">16:30:00</option>
+                                    <option value="17:00:00">17:00:00</option>
+                                    <option value="17:30:00">17:30:00</option>
+                                    <option value="18:00:00">18:00:00</option>
+                                    <option value="18:30:00">18:30:00</option>
+                                    <option value="19:00:00">19:00:00</option>
+                                    <option value="19:30:00">19:30:00</option>
+                                    <option value="20:00:00">20:00:00</option>
+                                    <option value="20:30:00">20:30:00</option>
+                                    <option value="21:00:00">21:00:00</option>
+                                    <option value="21:30:00">21:30:00</option>
+                                    <option value="22:00:00">22:00:00</option>
+                                    <option value="22:30:00">22:30:00</option>
+                                    <option value="23:00:00">23:00:00</option>
+                                    <option value="23:30:00">23:30:00</option>
+                                    <option value="00:00:00">00:00:00</option>
+                                    <option value="00:30:00">00:30:00</option>
+                                    <option value="01:00:00">01:00:00</option>
+                                    <option value="01:30:00">01:30:00</option>
+                                    <option value="02:00:00">02:00:00</option>
+                                    <option value="02:30:00">02:30:00</option>
+                                    <option value="03:00:00">03:00:00</option>
+                                    <option value="03:30:00">03:30:00</option>
+                                    <option value="04:00:00">04:00:00</option>
+                                    <option value="04:30:00">04:30:00</option>
+                                    <option value="05:00:00">05:00:00</option>
+                                    <option value="05:30:00">05:30:00</option>
+                                    <option value="06:00:00">06:00:00</option>
+                                    
+                                </select>
+                            </div>
+
+                            <div style="margin-bottom:10px">
+                                <select class="easyui-combobox" label="End Time:" required ="true" labelPosition="top" name="etime" style="width:100%;height:52px;" >
+                                    <option value="06:30:00">06:30:00</option>
+                                    <option value="07:00:00">07:00:00</option>
+                                    <option value="07:30:00">07:30:00</option>
+                                    <option value="08:00:00">08:00:00</option>
+                                    <option value="08:30:00">08:30:00</option>
+                                    <option value="09:00:00">09:00:00</option>
+                                    <option value="09:30:00">09:30:00</option>
+                                    <option value="10:00:00">10:00:00</option>
+                                    <option value="10:30:00">10:30:00</option>
+                                    <option value="11:00:00">11:00:00</option>
+                                    <option value="11:30:00">11:30:00</option>
+                                    <option value="12:00:00">12:00:00</option>
+                                    <option value="12:30:00">12:30:00</option>
+                                    <option value="13:00:00">13:00:00</option>
+                                    <option value="13:30:00">13:30:00</option>
+                                    <option value="14:00:00">14:00:00</option>
+                                    <option value="14:30:00">14:30:00</option>
+                                    <option value="15:00:00">15:00:00</option>
+                                    <option value="15:30:00">15:30:00</option>
+                                    <option value="16:00:00">16:00:00</option>
+                                    <option value="16:30:00">16:30:00</option>
+                                    <option value="17:00:00">17:00:00</option>
+                                    <option value="17:30:00">17:30:00</option>
+                                    <option value="18:00:00">18:00:00</option>
+                                    <option value="18:30:00">18:30:00</option>
+                                    <option value="19:00:00">19:00:00</option>
+                                    <option value="19:30:00">19:30:00</option>
+                                    <option value="20:00:00">20:00:00</option>
+                                    <option value="20:30:00">20:30:00</option>
+                                    <option value="21:00:00">21:00:00</option>
+                                    <option value="21:30:00">21:30:00</option>
+                                    <option value="22:00:00">22:00:00</option>
+                                    <option value="22:30:00">22:30:00</option>
+                                    <option value="23:00:00">23:00:00</option>
+                                    <option value="23:30:00">23:30:00</option>
+                                    <option value="00:00:00">00:00:00</option>
+                                    <option value="00:30:00">00:30:00</option>
+                                    <option value="01:00:00">01:00:00</option>
+                                    <option value="01:30:00">01:30:00</option>
+                                    <option value="02:00:00">02:00:00</option>
+                                    <option value="02:30:00">02:30:00</option>
+                                    <option value="03:00:00">03:00:00</option>
+                                    <option value="03:30:00">03:30:00</option>
+                                    <option value="04:00:00">04:00:00</option>
+                                    <option value="04:30:00">04:30:00</option>
+                                    <option value="05:00:00">05:00:00</option>
+                                    <option value="05:30:00">05:30:00</option>
+                                    <option value="06:00:00">06:00:00</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <select class="easyui-combobox" label="Tool Time: (number of tools/banks)" required ="true" labelPosition="top" name="toolpm" style="width:100%;height:52px;">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="10">11</option>
+                                    <option value="10">12</option>
+                                    <option value="10">13</option>
+                                    <option value="10">14</option>
+                                    <option value="10">15</option>
+                                    <option value="10">16</option>
+                                    <option value="10">17</option>
+                                    <option value="10">18</option>
+                                    <option value="10">19</option>
+                                    <option value="10">20</option>
+                                    <option value="10">21</option>
+                                    <option value="10">22</option>
+                                    <option value="10">23</option>
+
+                                </select>
+                            </div>
+                             <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" id="remarks" name="remarks" style="width:100%;height:70px" data-options="label:'Remarks:', multiline:true" required="true" labelPosition="top">
+                            </div>
+                        </form>
+                    </div>
+                    <!---->
+                    <div id="dlg-buttons">
+                        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveTooltime()" style="width:90px">Save</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Cancel</a>
+                    </div>
+
+
+
+                    <!---->
+                    <div id="editToolTime" class="easyui-dialog" style="width:400px"
+                            closed="true" buttons="#editToolTime-buttons">
+                        <form id="fmuph" method="post" novalidate style="margin:0;padding:20px 50px">
+
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" disabled="disable" name="id" label="Target ID" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                             <div style="margin-bottom:10px">
+                                    <select class="easyui-combobox" disabled="disable" name="process_id" label="Process ID:" required="true" labelPosition="top" style="width:100%;height:52px;">
+                                    </select>
+                             </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" disabled="disable" name="num_tool" label="Tools: " required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" disabled="disable" name="uph" label="Tool UPH:" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-textbox" disabled="disable" name="oee" label="OEE:" required ="true" labelPosition="top" style="width:100%;height:52px;">
+                            </div>
+                        
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-datetimebox" name="start_time" label="Select Start Time:" required ="true" id="startTime_sub" labelPosition="top"  showSeconds="false"  value= "07/18/2017 7:00:00" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <input class="easyui-datetimebox" name="end_time" label="Select End Time:" required ="true" id="endTime_sub"  labelPosition="top"  showSeconds="false"  value= "07/18/2017 7:00:00" style="width:100%;height:52px;">
+                            </div>
+                            <div style="margin-bottom:10px">
+                                <select class="easyui-combobox" name="toolpm" label="Tool Time:" required="true" labelPosition="top" style="width:100%;height:52px;">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
+                            </div>
+                             <div style="margin-bottom:30px">
+                                <input class="easyui-textbox" name="remarks" style="width:100%;height:52px" data-options="label:'Tool Time Remarks:'" required="true" labelPosition="top">
+                            </div>
+                             
+                        </form>
+                    </div>
+
+                    <!---->
+                    <div id="editToolTime-buttons">
+                        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveEditedToolTime()" style="width:90px">Save</a>
+                        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#editToolTime').dialog('close')" style="width:90px">Cancel</a>
+                    </div>
+
+                    <script type="text/javascript">
+                        $(function () {
+                            $("[rel='tooltip']").tooltip();
+                        });
+                    </script>
+
+                    <script type="text/javascript">
+                        var url;
+                                            
+                        $('#dg').datagrid({
+                            url: '/api/view',
+                            toolbar: "#toolbar",
+                            method: "get",
+                            rownumbers:"true",
+                            fitColumns:"true",
+                            singleSelect:"true"
+                        });
+
+                        function newToolTime(){
+                            $('#dlg').dialog('open').dialog('center').dialog('setTitle','New Tool Time');
+                            $('#fm').form('clear');
+                            url = '/api/add';
+
+                        }   
+                        function saveTooltime(){
+                            $('#fm').form('submit',{
+                                url: url,
+                                onSubmit: function(){
+                                    return $(this).form('validate');
+                                },
+                                success: function(result){
+
+                                        $('#dlg').dialog('close');        // close the dialog
+                                        $('#dg').datagrid('reload');    // reload the user data
+                                    
+                                }
+                            });
+                        }
+
+                        function editToolTime(){
+                            var row = $('#dg').datagrid('getSelected');
+                            if (row){
+                                $('#editToolTime').dialog('open').dialog('center').dialog('setTitle','Edit Tool time');
+                                $('#fmuph').form('load', row);
+                                url = '/api/update';
+                            }
+                        }
+                        function saveEditedToolTime(){
+                            $("input").prop('disabled', false);
+                            $('#fmuph').form('submit',{
+                                url: url,
+                                onSubmit: function(){
+                                    return $(this).form('validate');
+                                },
+                                success: function(result){
+                                    
+                                        $('#editToolTime').dialog('close'); // close the dialog
+                                        $('#dg').datagrid('reload');        // reload the user data
+                                    
+                                }
+                            });
+                        }
+                        function destroyToolTime(){
+                            var row = $('#dg').datagrid('getSelected');
+                            
+                            if (row){
+                            
+                                $.messager.confirm('Confirm','Are you sure you want to delete this tool time?',function(r){
+                                    if (r){
+                                        $.post('/api/delete',{id:row.id},function(){
+                                               $('#dg').datagrid('reload');    // reload the user data
+                                        });
+                                    }
+                                });
+                            }
+                            
+                        }
+                    </script>
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="newLoad" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                    <!-- Modal content-->
+             <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"> <i class="fa fa-envelope-open" aria-hidden="true"></i>  <strong>&nbsp; Hello, Admin!</strong></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Click <strong>New / Edit</strong> below to add Tool time and select any <strong>process</strong> on the <strong>left sidebar</strong> to monitor its <strong>Outs</strong> and <strong>Scrap</strong>.</p>
+
+                        <p style="float:right;"> Thank you! <i class="fa fa-smile-o" aria-hidden="true"></i><i class="fa fa-smile-o" aria-hidden="true"></i><i class="fa fa-smile-o" aria-hidden="true"></i></p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Okay!</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                    <!-- Modal content-->
+             <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><strong>I. How to Add Tool time? </strong></h4>
+                    </div>
+                    <div class="modal-body">
+                        <ol>
+                            <li>Click <strong>New / Edit</strong> button
+                                <br>
+                                <i>(Note: a pop-up box should appear)</i></li>
+                            <li>Select <strong>Process</strong> from drop-down box</li>
+                            <li>Select <strong>Date</strong> by clicking the calendar on the right corner <br><i>(Note: <strong>Start time</strong> and <strong>End time</strong> should be from <strong>6:30 - 18:30</strong> for <strong>AM shift</strong> and <strong>18:30 - 06:30</strong> for <strong>PM shift</strong>)</i></li>
+                            <li>Select <strong>Start Time</strong></li>
+                            <li>Select <strong>End Time</strong></li>
+                            <li>Select <strong>Tool Time</strong>
+                                <br>
+                                <i>(Note: How <strong>many tools</strong> for tool time?)</i></li>
+                            <li>and then Enter <strong>Remarks</strong></li>
+                        </ol>
+                    </div>
+
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><strong>II. How to Edit Tool time? </strong> </h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <ol>
+                            <li>Click <strong>New / Edit</strong> button
+                                <br>
+                                <i>(Note: a pop-up box should appear)</i></li>
+                            <li>Select <strong>Process</strong> from drop-down box that you want to edit</li>
+                            <li>Click <strong>Today</strong> as current <strong>Date</strong> by clicking the calendar on the right corner <br></li>
+                            <li>Select from <strong>Start Time</strong> drop-down box to edit any  starting point of existing Tool time</li>
+                            <li>Select from <strong>End Time</strong> drop-down box to edit any last point of existing Tool time  </li>
+                            <li>Select/Enter number of Tool/s for <strong>Tool Time</strong>
+                                <br>
+                                <i>(Note: Select/Enter <strong>(0) zero </strong> to <strong>remove</strong> tool time </i></li>
+                            <li>and then Enter <strong>Remarks</strong></li>
+                        </ol>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+</body>
+</html>
