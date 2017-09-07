@@ -82,89 +82,6 @@ module.exports = function(app){
         let check_exact_midnight = moment(today + " " + "00:00:00", "YYYY-MM-DD h:mm:ss");    
         let check_pm_end = moment(today + " " + "06:29:59", "YYYY-MM-DD h:mm:ss" );
 
-    /*
-    // api not yet needed
-    // http request total outs per process
-    app.get('/outs/:process_id', function(req, res){
-
-        //  get pool connection
-        pool.getConnection(function(err, connection){
-            //  parse the process input from the url
-            let process = req.params.process_id;
-
-                //  will check the AM and PM environment before running the query specifically for AM and PM shift
-                if (checker >= check_am_start && checker <= check_am_end) {
-
-                    console.log(dateAndtime + ' is between AM');
-                    //  callback = connection if it's AM
-                    connection.query({
-                        sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 06:30:00") AND date_time <= CONCAT("' + today + ' "," 18:29:59")',
-                        values: [process]
-                    },  function (err, results, fields){
-                        if (err) throw err;
-
-                            let obj = [];
-
-                                for (let i = 0; i < results.length; i++) {
-                                    obj.push(
-                                        {
-                                            processName: results[i].process_id,
-                                            sumOuts: results[i].totalOuts 
-                                        }
-                                    );
-                                }
-
-                        //connection.release();
-                        let processOuts_json = JSON.stringify(obj);
-                        let processOuts_tsv = TSV.stringify(obj);
-                       
-
-                        fs.writeFile('./json/' + process + '_totalouts.json', processOuts_json, 'utf8', function(err){
-                            if (err) throw err;
-                        }); 
-                        
-                        res.end(JSON.stringify(obj));
-                        
-                    });
-                
-                // if it's not between AM range then
-                } else {
-
-                    console.log(dateAndtime + ' is between PM');
-
-                    //  callback = connection if it's PM
-                    connection.query({
-
-                        //  not quite sure in the query as of july 22, 2017 need to go through later
-                        //  __________________________________________________
-                        sql: 'SELECT process_id, SUM(out_qty) AS totalOuts FROM MES_OUT_DETAILS WHERE process_id = ? AND	date_time >= CONCAT("' + today + ' "," 18:30:00") AND date_time <= CONCAT("' + today + ' " ," 06:29:59")',
-                        values: [process]
-                    },  function (err, results, fields){
-                        if (err) throw err;
-
-                            let obj = [];
-
-                                for (let i = 0; i < results.length; i++) {
-                                    obj.push(
-                                        {
-                                            processName: results[i].process_id,
-                                            sumOuts: results[i].totalOuts
-                                        }
-                                    );
-                                }
-
-                        //connection.release();
-                        res.end(JSON.stringify(obj));
-                    });
-                }
-                    
-        });
-
-        
-    });
-    */
-
-
     // http request hourly outs per process
     app.get('/hourly/:process_url', function(req, res){
         
@@ -204,7 +121,7 @@ module.exports = function(app){
                          if (checker >= check_pm_start && checker <= check_notyet_midnight) {
                             
                             connection.query({
-                            sql: 'SELECT process_id, process_name, SUM(CASE WHEN today_date = CURDATE() AND stime >= "18:30:00" && stime < CURTIME() - INTERVAL 10 MINUTE THEN total_target ELSE 0 END) AS t_target FROM  view_target WHERE process_name = ?',
+                            sql: 'SELECT process_id, process_name, SUM(total_target) AS t_target FROM view_target WHERE     stime >= "18:30:00" AND     stime <= CURTIME() - INTERVAL 10 MINUTE AND  process_name = ?',
                             values: [process]
                                 },  function(err, results, fields){
                                     if (err) return reject(err);
@@ -221,7 +138,7 @@ module.exports = function(app){
                          } else if (checker >= check_exact_midnight && checker <= check_pm_end) {
                             
                             connection.query({
-                            sql: 'SELECT process_id, process_name, (SUM(CASE  WHEN  today_date = CURDATE() - INTERVAL 1 DAY  AND stime >= "18:30:00"  && stime <= "23:59:59" THEN  total_target  ELSE 0 END) + SUM(CASE WHEN	today_date = CURDATE()	AND stime >= "00:00:00"    && stime < CURTIME() - INTERVAL 10 MINUTE	THEN	total_target	ELSE 0	END)) AS t_target FROM   view_target WHERE  process_name = ?',
+                            sql: 'SELECT A.process_id, B.process_name, (A.t_target + B.t_target) as t_target FROM ( (SELECT process_id, process_name, SUM(total_target) AS t_target  FROM view_target  WHERE    stime >= "18:30:00"  AND   today_date = CURDATE() - INTERVAL 1 DAY  AND   process_name = ?) A  JOIN (SELECT process_id, process_name, SUM(total_target) AS t_target   FROM view_target   WHERE     stime >= "00:00:00"   AND  stime <= CURTIME() - INTERVAL 10 MINUTE   AND   process_name = ?) B  ON A.process_id = B.process_id )',
                             values: [process]
                                 },  function(err, results, fields){
                                     if (err) return reject(err);
@@ -280,12 +197,8 @@ module.exports = function(app){
            let process = req.params.process_url;    //  path
            let data = values;         //    to variable
 
-           console.log(data);
-
                     //  subtract to get the variance
                     var variance = data[0]['processTarget'][0] - data[1]['processOuts'][0];
-
-                    console.log(variance);
                     
                     //  this is to make variance negative
                     if (variance > 0) { 
@@ -727,11 +640,6 @@ module.exports = function(app){
                     //  send json 
                     res.send(JSON.stringify(obj));
 
-                    fs.writeFile('./public/view.json', JSON.stringify(obj), 'utf8', function(err){
-                        if (err) throw err;
-                    });
-                    
-
             });
 
         // remove connection
@@ -886,10 +794,6 @@ module.exports = function(app){
 
                 //  send json 
                 res.send(JSON.stringify(obj));
-                
-                fs.writeFile('./public/settings.json', JSON.stringify(obj), 'utf8', function(err){
-                  if (err) throw err;
-                });  
 
             });
 
