@@ -2,10 +2,8 @@ let bodyParser = require('body-parser');
 let mysql = require('mysql');
 let moment = require('moment');
 let fs = require('fs');
-
 let json2csv = require('json2csv');
 let csv = require('csv-array');
-
 
 //  export
 module.exports = function(app){
@@ -277,333 +275,7 @@ module.exports = function(app){
             res.render(process, {data} );
             
         }); 
-
-        // REPLACED BY SCRIPT @ September 9, 2017 
-        /*
-       //   systems database
-        pool.getConnection(function(err, connection){
-           if (err) throw err;
-            //  will check the AM and PM 
-            if (checker >= check_am_start && checker <= check_am_end) {
-  
-                    //  need to translate this to script.......
-                        connection.query({
-                            
-                            sql: 'SELECT A.process_id, IF(A.totalOuts IS NULL, 0, A.totalOuts) AS outs_one, IF(B.totalOuts IS NULL, 0, B.totalOuts) AS outs_two, IF(C.totalOuts IS NULL, 0, C.totalOuts) AS outs_three, IF(D.totalOuts IS NULL, 0, D.totalOuts) AS outs_four, IF(E.totalOuts IS NULL, 0, E.totalOuts) AS outs_five, IF(F.totalOuts IS NULL, 0, F.totalOuts) AS outs_six, IF(G.totalOuts IS NULL, 0, G.totalOuts) AS outs_seven, IF(H.totalOuts IS NULL, 0, H.totalOuts) AS outs_eight, IF(I.totalOuts IS NULL, 0, I.totalOuts) AS outs_nine, IF(J.totalOuts IS NULL, 0, J.totalOuts) AS outs_ten, IF(K.totalOuts IS NULL, 0, K.totalOuts) AS outs_eleven, IF(L.totalOuts IS NULL, 0, L.totalOuts) AS outs_twelve FROM (SELECT A.process_id, SUM(A.out_qty) AS totalOuts FROM MES_OUT_DETAILS A  WHERE A.process_id = ? AND A.date_time >= CONCAT("' + today + ' ", " 06:30:00")     && A.date_time <= CONCAT("' + today + ' ", " 07:29:59")) A   CROSS JOIN (SELECT     SUM(A.out_qty) AS totalOuts  FROM   MES_OUT_DETAILS A  WHERE   A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 07:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 08:29:59")) B CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 08:30:00")      && A.date_time <= CONCAT("' + today + ' ", " 09:29:59")) C  CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 09:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 10:29:59")) D    CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 10:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 11:29:59")) E   CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 11:30:00")          && A.date_time <= CONCAT("' + today + ' ", " 12:29:59")) F    CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 12:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 13:29:59")) G CROSS JOIN(SELECT  SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE  A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 13:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 14:29:59")) H    CROSS JOIN(SELECT        SUM(A.out_qty) AS totalOuts   FROM       MES_OUT_DETAILS A   WHERE       A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 14:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 15:29:59")) I     CROSS JOIN  (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 15:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 16:29:59")) J     CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 16:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 17:29:59")) K    CROSS JOIN(SELECT     SUM(A.out_qty) AS totalOuts FROM    MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 17:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 18:29:59")) L UNION ALL SELECT A.process_id, IF(A.totalScraps IS NULL, 0, A.totalScraps) AS scraps_one, IF(B.totalScraps IS NULL, 0, B.totalScraps) AS scraps_two, IF(C.totalScraps IS NULL, 0, C.totalScraps) AS scraps_three, IF(D.totalScraps IS NULL, 0, D.totalScraps) AS scraps_four, IF(E.totalScraps IS NULL, 0, E.totalScraps) AS scraps_five, IF(F.totalScraps IS NULL, 0, F.totalScraps) AS scraps_six, IF(G.totalScraps IS NULL, 0, G.totalScraps) AS scraps_seven, IF(H.totalScraps IS NULL, 0, H.totalScraps) AS scraps_eight, IF(I.totalScraps IS NULL, 0, I.totalScraps) AS scraps_nine, IF(J.totalScraps IS NULL, 0, J.totalScraps) AS scraps_ten, IF(K.totalScraps IS NULL, 0, K.totalScraps) AS scraps_eleven, IF(L.totalScraps IS NULL, 0, L.totalScraps) AS scraps_twelve FROM (SELECT A.process_id, SUM(A.scrap_qty) AS totalScraps FROM MES_SCRAP_DETAILS A  WHERE  A.process_id = ? AND   A.date_time >= CONCAT("' + today + ' ", " 06:30:00")     && A.date_time <= CONCAT("' + today + ' ", " 07:29:59")) A   CROSS JOIN (SELECT     SUM(A.scrap_qty) AS totalScraps  FROM   MES_SCRAP_DETAILS A  WHERE   A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 07:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 08:29:59")) B CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 08:30:00")      && A.date_time <= CONCAT("' + today + ' ", " 09:29:59")) C  CROSS JOIN  (SELECT       SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 09:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 10:29:59")) D    CROSS JOIN  (SELECT       SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 10:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 11:29:59")) E   CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 11:30:00")          && A.date_time <= CONCAT("' + today + ' ", " 12:29:59")) F    CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 12:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 13:29:59")) G CROSS JOIN(SELECT  SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE  A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 13:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 14:29:59")) H    CROSS JOIN(SELECT        SUM(A.scrap_qty) AS totalScraps   FROM       MES_SCRAP_DETAILS A   WHERE       A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 14:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 15:29:59")) I     CROSS JOIN  (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 15:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 16:29:59")) J     CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 16:30:00")         && A.date_time <= CONCAT("' + today + ' ", " 17:29:59")) K    CROSS JOIN(SELECT     SUM(A.scrap_qty) AS totalScraps FROM    MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 17:30:00")        && A.date_time <= CONCAT("' + today + ' ", " 18:29:59")) L',
-
-                            values: [process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process]  
-
-                        }, function(err, results, fields){
-                            if (err) throw err;
-
-                            let obj = [];
-
-                                    obj.push(
-                                        {   
-                                            hours: today + ' 06:30',
-                                            outs: results[0].outs_one,
-                                            dppm: Math.round(results[1].outs_one/(results[0].outs_one + results[1].outs_one) * 1000000) || 0
-                                            
-                                        },
-                                        {
-                                            hours: today + ' 07:30',
-                                            outs: results[0].outs_two,
-                                            dppm: Math.round(results[1].outs_two/(results[0].outs_two + results[1].outs_two) * 1000000) || 0
-                                            
-                                        },
-                                        {
-                                            hours: today + ' 08:30',
-                                            outs: results[0].outs_three,
-                                            dppm: Math.round(results[1].outs_three/(results[0].outs_three + results[1].outs_three) * 1000000) || 0
-                                        },
-                                        {
-                                            hours: today + ' 09:30',
-                                            outs: results[0].outs_four,
-                                            dppm: Math.round(results[1].outs_four/(results[0].outs_four + results[1].outs_four) * 1000000) || 0
-                                        },
-                                        {
-                                            hours: today + ' 10:30',
-                                            outs: results[0].outs_five,
-                                            dppm: Math.round(results[1].outs_five/(results[0].outs_five + results[1].outs_five) * 1000000) || 0
-                                        },
-                                        {
-                                            hours: today + ' 11:30',
-                                            outs: results[0].outs_six,
-                                            dppm: Math.round(results[1].outs_six/(results[0].outs_six + results[1].outs_six) * 1000000) || 0
-                                        },
-                                        {
-                                            hours: today + ' 12:30',
-                                            outs: results[0].outs_seven,
-                                            dppm: Math.round(results[1].outs_seven/(results[0].outs_seven + results[1].outs_seven) * 1000000) || 0
-                                        },
-                                        {
-                                            hours: today + ' 13:30',
-                                            outs: results[0].outs_eight,
-                                            dppm: Math.round(results[1].outs_eight/(results[0].outs_eight + results[1].outs_eight) * 1000000) || 0
-                                        },
-                                        {
-                                            hours: today + ' 14:30',
-                                            outs: results[0].outs_nine,
-                                            dppm: Math.round(results[1].outs_nine/(results[0].outs_nine + results[1].outs_nine) * 1000000) || 0
-                                        },
-                                        {
-                                            hours: today + ' 15:30',
-                                            outs: results[0].outs_ten,
-                                            dppm: Math.round(results[1].outs_ten/(results[0].outs_ten + results[1].outs_ten) * 1000000) || 0
-                        
-                                        },
-                                        {
-                                            hours: today + ' 16:30',
-                                            outs: results[0].outs_eleven,
-                                            dppm: Math.round(results[1].outs_eleven/(results[0].outs_eleven + results[1].outs_eleven) * 1000000) || 0
-                                        },
-                                        {
-                                            hours: today + ' 17:30',
-                                            outs: results[0].outs_twelve,
-                                            dppm: Math.round(results[1].outs_twelve/(results[0].outs_twelve + results[1].outs_twelve) * 1000000) || 0
-                                        }
-                                        
-                                    );
-                            
-                            // stringify obj to TSV
-                            // let processHourly_tsv = TSV.stringify(obj);
-
-                            //  create .tsv per request
-                            //fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
-                            //    if (err) throw err;
-                            //});
-
-
-                            //  json2csv 
-                            let fields = ['hours', 'outs', 'dppm'];
-                            let gg = {
-                                data: obj,
-                                fields: fields,
-                                quotes: ''
-                            };
-                            
-                            let processHourly_csv = json2csv(gg);
-                            console.log(processHourly_csv);
-                            //  create .csv 
-                            fs.writeFile('./public/' + process + '.csv', processHourly_csv, function(err){
-                                if (err) throw err;
-                            });
-
-                          // remove connection
-                            connection.release();
-
-                           // res.render(process);
-                        });
-
-                
-                // then for PM shift
-                } else {
-                    
-                    //  if current time is between start pm shift and midnight
-                    if (checker >= check_pm_start && checker <= check_notyet_midnight) {
-                         // console.log(dateAndtime + ' ' + process + ' is between 18:30:00 and not yet midnight');
-
-                            connection.query({
-                                sql: 'SELECT A.process_id, IF(A.totalOuts IS NULL, 0, A.totalOuts) AS outs_one, IF(B.totalOuts IS NULL, 0, B.totalOuts) AS outs_two, IF(C.totalOuts IS NULL, 0, C.totalOuts) AS outs_three, IF(D.totalOuts IS NULL, 0, D.totalOuts) AS outs_four, IF(E.totalOuts IS NULL, 0, E.totalOuts) AS outs_five, IF(F.totalOuts IS NULL, 0, F.totalOuts) AS outs_six, IF(G.totalOuts IS NULL, 0, G.totalOuts) AS outs_seven, IF(H.totalOuts IS NULL, 0, H.totalOuts) AS outs_eight, IF(I.totalOuts IS NULL, 0, I.totalOuts) AS outs_nine, IF(J.totalOuts IS NULL, 0, J.totalOuts) AS outs_ten, IF(K.totalOuts IS NULL, 0, K.totalOuts) AS outs_eleven, IF(L.totalOuts IS NULL, 0, L.totalOuts) AS outs_twelve FROM (SELECT A.process_id, SUM(A.out_qty) AS totalOuts FROM MES_OUT_DETAILS A  WHERE A.process_id = ? AND A.date_time >= CONCAT("' + today + ' ", " 18:30:00")     && A.date_time <= CONCAT("' + today + ' ", " 19:29:59")) A   CROSS JOIN (SELECT     SUM(A.out_qty) AS totalOuts  FROM   MES_OUT_DETAILS A  WHERE   A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 19:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 20:29:59")) B CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 20:30:00")      && A.date_time <= CONCAT("' + today + ' ", " 21:29:59")) C  CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 21:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 22:29:59")) D    CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 22:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 23:29:59")) E   CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 23:30:00")          && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 00:29:59")) F    CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?        AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 00:30:00")       && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 01:29:59")) G CROSS JOIN(SELECT  SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE  A.process_id = ?         AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 01:30:00")        && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 02:29:59")) H    CROSS JOIN(SELECT        SUM(A.out_qty) AS totalOuts   FROM       MES_OUT_DETAILS A   WHERE       A.process_id = ?          AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 02:30:00")         && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 03:29:59")) I     CROSS JOIN  (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 03:30:00")         && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 04:29:59")) J     CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 04:30:00")         && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 05:29:59")) K    CROSS JOIN(SELECT     SUM(A.out_qty) AS totalOuts FROM    MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 05:30:00")        && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 06:29:59")) L UNION ALL SELECT A.process_id, IF(A.totalScraps IS NULL, 0, A.totalScraps) AS scraps_one, IF(B.totalScraps IS NULL, 0, B.totalScraps) AS scraps_two, IF(C.totalScraps IS NULL, 0, C.totalScraps) AS scraps_three, IF(D.totalScraps IS NULL, 0, D.totalScraps) AS scraps_four, IF(E.totalScraps IS NULL, 0, E.totalScraps) AS scraps_five, IF(F.totalScraps IS NULL, 0, F.totalScraps) AS scraps_six, IF(G.totalScraps IS NULL, 0, G.totalScraps) AS scraps_seven, IF(H.totalScraps IS NULL, 0, H.totalScraps) AS scraps_eight, IF(I.totalScraps IS NULL, 0, I.totalScraps) AS scraps_nine, IF(J.totalScraps IS NULL, 0, J.totalScraps) AS scraps_ten, IF(K.totalScraps IS NULL, 0, K.totalScraps) AS scraps_eleven, IF(L.totalScraps IS NULL, 0, L.totalScraps) AS scraps_twelve FROM (SELECT A.process_id, SUM(A.scrap_qty) AS totalScraps FROM MES_SCRAP_DETAILS A  WHERE  A.process_id = ? AND   A.date_time >= CONCAT("' + today + ' ", " 18:30:00")     && A.date_time <= CONCAT("' + today + ' ", " 19:29:59")) A   CROSS JOIN (SELECT     SUM(A.scrap_qty) AS totalScraps  FROM   MES_SCRAP_DETAILS A  WHERE   A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 19:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 20:29:59")) B CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + ' ", " 20:30:00")      && A.date_time <= CONCAT("' + today + ' ", " 21:29:59")) C  CROSS JOIN  (SELECT       SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?        AND A.date_time >= CONCAT("' + today + ' ", " 21:30:00")       && A.date_time <= CONCAT("' + today + ' ", " 22:29:59")) D    CROSS JOIN  (SELECT       SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?    AND A.date_time >= CONCAT("' + today + ' ", " 22:30:00")    && A.date_time <= CONCAT("' + today + ' ", " 23:29:59")) E   CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?          AND A.date_time >= CONCAT("' + today + ' ", " 23:30:00")          && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 00:29:59")) F    CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?        AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 00:30:00")       && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 01:29:59")) G CROSS JOIN(SELECT  SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE  A.process_id = ?         AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 01:30:00")        && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 02:29:59")) H    CROSS JOIN(SELECT        SUM(A.scrap_qty) AS totalScraps   FROM       MES_SCRAP_DETAILS A   WHERE       A.process_id = ?          AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 02:30:00")         && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 03:29:59")) I     CROSS JOIN  (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 03:30:00")         && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 04:29:59")) J     CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 04:30:00")         && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 05:29:59")) K    CROSS JOIN(SELECT     SUM(A.scrap_qty) AS totalScraps FROM    MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + todayPlusOne + ' ", " 05:30:00")        && A.date_time <= CONCAT("' + todayPlusOne + ' ", " 06:29:59")) L',
-                                values: [process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process]
-                            },  function(err, results, fields){
-                                
-                                    let obj = [];
-
-                                        obj.push(
-                                            {   
-                                                hours: today + ' 18:30',
-                                                outs: results[0].outs_one,
-                                                dppm: Math.round(results[1].outs_one/(results[0].outs_one + results[1].outs_one) * 1000000) || 0
-                                                
-                                            },
-                                            {
-                                                hours: today + ' 19:30',
-                                                outs: results[0].outs_two,
-                                                dppm: Math.round(results[1].outs_two/(results[0].outs_two + results[1].outs_two) * 1000000) || 0
-                                                
-                                            },
-                                            {
-                                                hours: today + ' 20:30',
-                                                outs: results[0].outs_three,
-                                                dppm: Math.round(results[1].outs_three/(results[0].outs_three + results[1].outs_three) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: today + ' 21:30',
-                                                outs: results[0].outs_four,
-                                                dppm: Math.round(results[1].outs_four/(results[0].outs_four + results[1].outs_four) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: today + ' 22:30',
-                                                outs: results[0].outs_five,
-                                                dppm: Math.round(results[1].outs_five/(results[0].outs_five + results[1].outs_five) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: today + ' 23:30',
-                                                outs: results[0].outs_six,
-                                                dppm: Math.round(results[1].outs_six/(results[0].outs_six + results[1].outs_six) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: todayPlusOne + ' 00:30',
-                                                outs: results[0].outs_seven,
-                                                dppm: Math.round(results[1].outs_seven/(results[0].outs_seven + results[1].outs_seven) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: todayPlusOne + ' 01:30',
-                                                outs: results[0].outs_eight,
-                                                dppm: Math.round(results[1].outs_eight/(results[0].outs_eight + results[1].outs_eight) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: todayPlusOne + ' 02:30',
-                                                outs: results[0].outs_nine,
-                                                dppm: Math.round(results[1].outs_nine/(results[0].outs_nine + results[1].outs_nine) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: todayPlusOne + ' 03:30',
-                                                outs: results[0].outs_ten,
-                                                dppm: Math.round(results[1].outs_ten/(results[0].outs_ten + results[1].outs_ten) * 1000000) || 0
-                            
-                                            },
-                                            {
-                                                hours: todayPlusOne + ' 04:30',
-                                                outs: results[0].outs_eleven,
-                                                dppm: Math.round(results[1].outs_eleven/(results[0].outs_eleven + results[1].outs_eleven) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: todayPlusOne + ' 05:30',
-                                                outs: results[0].outs_twelve,
-                                                dppm: Math.round(results[1].outs_twelve/(results[0].outs_twelve + results[1].outs_twelve) * 1000000) || 0
-                                            }
-                                            
-                                        );
-                                
-                                
-                                //  json2csv 
-                                let fields = ['hours', 'outs', 'dppm'];
-                                let gg = {
-                                    data: obj,
-                                    fields: fields,
-                                    quotes: ''
-                                };
-                                
-                                let processHourly_csv = json2csv(gg);
-                                console.log(processHourly_csv);
-                                //  create .csv 
-                                fs.writeFile('./public/' + process + '.csv', processHourly_csv, function(err){
-                                    if (err) throw err;
-                                });
-
-                                // remove connection
-                                connection.release();
-
-                            });
-
-                    } else if (checker >= check_exact_midnight && checker <= check_pm_end) {
-                        // console.log(dateAndtime + ' ' + process + ' is between exact midnight and pm end shift');
-
-                         connection.query({
-                             sql: 'SELECT A.process_id, IF(A.totalOuts IS NULL, 0, A.totalOuts) AS outs_one, IF(B.totalOuts IS NULL, 0, B.totalOuts) AS outs_two, IF(C.totalOuts IS NULL, 0, C.totalOuts) AS outs_three, IF(D.totalOuts IS NULL, 0, D.totalOuts) AS outs_four, IF(E.totalOuts IS NULL, 0, E.totalOuts) AS outs_five, IF(F.totalOuts IS NULL, 0, F.totalOuts) AS outs_six, IF(G.totalOuts IS NULL, 0, G.totalOuts) AS outs_seven, IF(H.totalOuts IS NULL, 0, H.totalOuts) AS outs_eight, IF(I.totalOuts IS NULL, 0, I.totalOuts) AS outs_nine, IF(J.totalOuts IS NULL, 0, J.totalOuts) AS outs_ten, IF(K.totalOuts IS NULL, 0, K.totalOuts) AS outs_eleven, IF(L.totalOuts IS NULL, 0, L.totalOuts) AS outs_twelve FROM (SELECT A.process_id, SUM(A.out_qty) AS totalOuts FROM MES_OUT_DETAILS A  WHERE A.process_id = ? AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 18:30:00")     && A.date_time <= CONCAT("' + todayMinusOne + ' ", " 19:29:59")) A   CROSS JOIN (SELECT     SUM(A.out_qty) AS totalOuts  FROM   MES_OUT_DETAILS A  WHERE   A.process_id = ?    AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 19:30:00")    && A.date_time <= CONCAT("' + todayMinusOne + ' ", " 20:29:59")) B CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 20:30:00")      && A.date_time <= CONCAT("' + todayMinusOne + ' ", " 21:29:59")) C  CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?        AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 21:30:00")       && A.date_time <= CONCAT("' + todayMinusOne + ' ", " 22:29:59")) D    CROSS JOIN  (SELECT       SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?    AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 22:30:00")    && A.date_time <= CONCAT("' + todayMinusOne + ' ", " 23:29:59")) E   CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts  FROM      MES_OUT_DETAILS A  WHERE      A.process_id = ?          AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 23:30:00")          && A.date_time <= CONCAT("' + today + ' ", " 00:29:59")) F    CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?        AND A.date_time >= CONCAT("' + today + '  ", " 00:30:00")       && A.date_time <= CONCAT("' + today + '  ", " 01:29:59")) G CROSS JOIN(SELECT  SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE  A.process_id = ?         AND A.date_time >= CONCAT("' + today + '   ", " 01:30:00")        && A.date_time <= CONCAT("' + today + '  ", " 02:29:59")) H    CROSS JOIN(SELECT        SUM(A.out_qty) AS totalOuts   FROM       MES_OUT_DETAILS A   WHERE       A.process_id = ?          AND A.date_time >= CONCAT("' + today + '  ", " 02:30:00")         && A.date_time <= CONCAT("' + today + '  ", " 03:29:59")) I     CROSS JOIN  (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + '  ", " 03:30:00")         && A.date_time <= CONCAT("' + today + '  ", " 04:29:59")) J     CROSS JOIN (SELECT      SUM(A.out_qty) AS totalOuts FROM     MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + '  ", " 04:30:00")         && A.date_time <= CONCAT("' + today + '  ", " 05:29:59")) K    CROSS JOIN(SELECT     SUM(A.out_qty) AS totalOuts FROM    MES_OUT_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + '  ", " 05:30:00")        && A.date_time <= CONCAT("' + today + '  ", " 06:29:59")) L UNION ALL SELECT A.process_id, IF(A.totalScraps IS NULL, 0, A.totalScraps) AS scraps_one, IF(B.totalScraps IS NULL, 0, B.totalScraps) AS scraps_two, IF(C.totalScraps IS NULL, 0, C.totalScraps) AS scraps_three, IF(D.totalScraps IS NULL, 0, D.totalScraps) AS scraps_four, IF(E.totalScraps IS NULL, 0, E.totalScraps) AS scraps_five, IF(F.totalScraps IS NULL, 0, F.totalScraps) AS scraps_six, IF(G.totalScraps IS NULL, 0, G.totalScraps) AS scraps_seven, IF(H.totalScraps IS NULL, 0, H.totalScraps) AS scraps_eight, IF(I.totalScraps IS NULL, 0, I.totalScraps) AS scraps_nine, IF(J.totalScraps IS NULL, 0, J.totalScraps) AS scraps_ten, IF(K.totalScraps IS NULL, 0, K.totalScraps) AS scraps_eleven, IF(L.totalScraps IS NULL, 0, L.totalScraps) AS scraps_twelve FROM (SELECT A.process_id, SUM(A.scrap_qty) AS totalScraps FROM MES_SCRAP_DETAILS A  WHERE  A.process_id = ? AND   A.date_time >= CONCAT("' + todayMinusOne + ' ", " 18:30:00")     && A.date_time <= CONCAT("' + todayMinusOne + ' ", " 19:29:59")) A   CROSS JOIN (SELECT     SUM(A.scrap_qty) AS totalScraps  FROM   MES_SCRAP_DETAILS A  WHERE   A.process_id = ?    AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 19:30:00")    && A.date_time <= CONCAT("' + todayMinusOne + ' ", " 20:29:59")) B CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 20:30:00")      && A.date_time <= CONCAT("' + todayMinusOne + ' ", " 21:29:59")) C  CROSS JOIN  (SELECT       SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?        AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 21:30:00")       && A.date_time <= CONCAT("' + todayMinusOne + ' ", " 22:29:59")) D    CROSS JOIN  (SELECT       SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?    AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 22:30:00")    && A.date_time <= CONCAT("' + today + '  - INTERVAL 1 DAY", " 23:29:59")) E   CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps  FROM      MES_SCRAP_DETAILS A  WHERE      A.process_id = ?          AND A.date_time >= CONCAT("' + todayMinusOne + ' ", " 23:30:00")          && A.date_time <= CONCAT("' + today + '  ", " 00:29:59")) F    CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?        AND A.date_time >= CONCAT("' + today + '  ", " 00:30:00")       && A.date_time <= CONCAT("' + today + '  ", " 01:29:59")) G CROSS JOIN(SELECT  SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE  A.process_id = ?         AND A.date_time >= CONCAT("' + today + '  ", " 01:30:00")        && A.date_time <= CONCAT("' + today + '  ", " 02:29:59")) H    CROSS JOIN(SELECT        SUM(A.scrap_qty) AS totalScraps   FROM       MES_SCRAP_DETAILS A   WHERE       A.process_id = ?          AND A.date_time >= CONCAT("' + today + '  ", " 02:30:00")         && A.date_time <= CONCAT("' + today + '  ", " 03:29:59")) I     CROSS JOIN  (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + '  ", " 03:30:00")         && A.date_time <= CONCAT("' + today + '  ", " 04:29:59")) J     CROSS JOIN (SELECT      SUM(A.scrap_qty) AS totalScraps FROM     MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + '  ", " 04:30:00")         && A.date_time <= CONCAT("' + today + '  ", " 05:29:59")) K    CROSS JOIN(SELECT     SUM(A.scrap_qty) AS totalScraps FROM    MES_SCRAP_DETAILS A WHERE     A.process_id = ?         AND A.date_time >= CONCAT("' + today + '  ", " 05:30:00")        && A.date_time <= CONCAT("' + today + '  ", " 06:29:59")) L',
-
-                             values : [process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process]
-                         }, function(err, results, fields){
-
-                                let obj = [];
-
-                                        obj.push(
-                                            {   
-                                                hours: todayMinusOne + ' 18:30',
-                                                outs: results[0].outs_one,
-                                                dppm: Math.round(results[1].outs_one/(results[0].outs_one + results[1].outs_one) * 1000000) || 0
-                                                
-                                            },
-                                            {
-                                                hours: todayMinusOne + ' 19:30',
-                                                outs: results[0].outs_two,
-                                                dppm: Math.round(results[1].outs_two/(results[0].outs_two + results[1].outs_two) * 1000000) || 0
-                                                
-                                            },
-                                            {
-                                                hours: todayMinusOne + ' 20:30',
-                                                outs: results[0].outs_three,
-                                                dppm: Math.round(results[1].outs_three/(results[0].outs_three + results[1].outs_three) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: todayMinusOne + ' 21:30',
-                                                outs: results[0].outs_four,
-                                                dppm: Math.round(results[1].outs_four/(results[0].outs_four + results[1].outs_four) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: todayMinusOne + ' 22:30',
-                                                outs: results[0].outs_five,
-                                                dppm: Math.round(results[1].outs_five/(results[0].outs_five + results[1].outs_five) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: todayMinusOne + ' 23:30',
-                                                outs: results[0].outs_six,
-                                                dppm: Math.round(results[1].outs_six/(results[0].outs_six + results[1].outs_six) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: today + ' 00:30',
-                                                outs: results[0].outs_seven,
-                                                dppm: Math.round(results[1].outs_seven/(results[0].outs_seven + results[1].outs_seven) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: today + ' 01:30',
-                                                outs: results[0].outs_eight,
-                                                dppm: Math.round(results[1].outs_eight/(results[0].outs_eight + results[1].outs_eight) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: today + ' 02:30',
-                                                outs: results[0].outs_nine,
-                                                dppm: Math.round(results[1].outs_nine/(results[0].outs_nine + results[1].outs_nine) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: today + ' 03:30',
-                                                outs: results[0].outs_ten,
-                                                dppm: Math.round(results[1].outs_ten/(results[0].outs_ten + results[1].outs_ten) * 1000000) || 0
-                            
-                                            },
-                                            {
-                                                hours: today + ' 04:30',
-                                                outs: results[0].outs_eleven,
-                                                dppm: Math.round(results[1].outs_eleven/(results[0].outs_eleven + results[1].outs_eleven) * 1000000) || 0
-                                            },
-                                            {
-                                                hours: today + ' 05:30',
-                                                outs: results[0].outs_twelve,
-                                                dppm: Math.round(results[1].outs_twelve/(results[0].outs_twelve + results[1].outs_twelve) * 1000000) || 0
-                                            }
-                                            
-                                        );
-                                
-                                //  json2csv 
-                                let fields = ['hours', 'outs', 'dppm'];
-                                let gg = {
-                                    data: obj,
-                                    fields: fields,
-                                    quotes: ''
-                                };
-                                
-                                let processHourly_csv = json2csv(gg);
-                                console.log(processHourly_csv);
-                                //  create .csv 
-                                fs.writeFile('./public/' + process + '.csv', processHourly_csv, function(err){
-                                    if (err) throw err;
-                                });
-
-                                // remove connection
-                                connection.release();
-
-                         });
-
-                    }
-
-                }
-
-        });
-        
-        */
-        
+ 
     }); 
 
 
@@ -647,12 +319,11 @@ module.exports = function(app){
 
         });
 
-        
-
     });
 
     // update data
     app.post('/api/update', function(req, res){
+
         poolLocal.getConnection(function(err, connection){
             if (err) throw err;
 
@@ -667,10 +338,10 @@ module.exports = function(app){
 
 
                 connection.query({
-                sql: 'UPDATE tbl_target_toolpm SET start_time =?, end_time =?, toolpm =?, remarks= ? WHERE id =? ',
-                values: [startTime, endTime, req.body.toolpm, req.body.remarks, req.body.id]
-            },  function(err, results, fields){
-                if(err) throw err;
+                    sql: 'UPDATE tbl_target_toolpm SET start_time =?, end_time =?, toolpm =?, remarks= ? WHERE id =? ',
+                    values: [startTime, endTime, req.body.toolpm, req.body.remarks, req.body.id]
+                },  function(err, results, fields){
+                    if(err) throw err;
 
                 console.log('Target id: ' + req.body.id + ' has been updated!');
                 res.redirect('back');
@@ -684,9 +355,23 @@ module.exports = function(app){
         connection.release();
             
         });
+    });
 
-        
 
+    // delete tool time
+    app.post('/api/delete', function(req, res){
+        poolLocal.getConnection(function(err, connection){
+            if (err) throw err;
+
+                connection.query({
+                    sql: 'UPDATE tbl_target_input SET toolpm = 0',
+                    //  values: [req.body.process_id]
+                },  function(err, results, field){
+                        res.redirect('back');
+                });
+            
+
+        });
     });
         
     //  add tool time data
@@ -699,33 +384,6 @@ module.exports = function(app){
                 //  need to dis to align the jeasyui datetime with my format
                 startTime = new Date(req.body.startTime);
                 endTime = new Date(req.body.endTime);
-
-                /*
-                connection.query({
-                    sql: 'INSERT INTO tbl_target_view SET process_id =?, start_time=?, end_time=?, toolpm=?, remarks=?',
-                    values: [req.body.process_id, startTime, endTime, req.body.toolpm, req.body.remarks]
-                },  function(err, results, fields){
-                    if (err) throw err;
-
-                    console.log('Process : ' + req.body.process_id + ' has been added!');
-                    res.redirect('back');
-                }); */
-
-                // UPDATE@@@@@@@@2 start_time to tbl_target_details
-                connection.query({
-                    sql: 'INSERT INTO tbl_target_details SET date_time=?, process_id =?' ,
-                    values: [startTime, req.body.process_id]
-                },  function(err, resutls, fields){
-                    if (err) throw err;
-                });
-
-                // UPDATE@@@@@@@@@@ end_time to tbl_target_details
-                connection.query({
-                    sql: 'INSERT INTO tbl_target_details SET date_time=?, process_id =?' ,
-                    values: [endTime, req.body.process_id]
-                },  function(err, resutls, fields){
-                    if (err) throw err;
-                });
 
                //   instead of adding literal values, UPDATE!
                 connection.query({
@@ -839,7 +497,7 @@ module.exports = function(app){
 
     });
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     app.get('/mobile/', function(req, res){
 
         poolLocal.getConnection(function(err, connection){
