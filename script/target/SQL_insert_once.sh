@@ -3,7 +3,7 @@
 # KEVIN B MOCORRO
 # Version 1.0
 
-cd /c/sandbox/nodejs-web-app/script
+cd /c/sandbox/nodejs-web-app/script/target
 PATH=$PATH:/c/xampp/mysql/bin
 TABLE_NAME=tbl_target_input
 DATE=`date +%Y-%m-%d`

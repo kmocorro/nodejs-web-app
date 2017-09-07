@@ -1,10 +1,10 @@
-var bodyParser = require('body-parser');
-var mysql = require('mysql');
-var moment = require('moment');
-var fs = require('fs');
+let bodyParser = require('body-parser');
+let mysql = require('mysql');
+let moment = require('moment');
+let fs = require('fs');
 
-var json2csv = require('json2csv');
-var csv = require('csv-array');
+let json2csv = require('json2csv');
+let csv = require('csv-array');
 
 
 //  export
@@ -24,7 +24,7 @@ module.exports = function(app){
     //  using the db credentials 
     //  change this create a dbconfig later
     //  need to encrypt this.
-    var pool = mysql.createPool({
+    let pool = mysql.createPool({
         multipleStatements: true,
         connectionLimit:    100, //try for now :))
         host    :           'ddolfsb30gea9k.c36ugxkfyi6r.us-west-2.rds.amazonaws.com',
@@ -34,7 +34,7 @@ module.exports = function(app){
     });    
 
 
-    var poolLocal = mysql.createPool({
+    let poolLocal = mysql.createPool({
         multipleStatements: true,
         connectionLimit:    100, //try for now :))
         host    :           'localhost',
@@ -44,17 +44,17 @@ module.exports = function(app){
         }); 
         
     //  today today today
-    var today = new Date();
-    var todayPlus = moment();
-    var todayMinus = moment();
-    var dateAndtime = new Date();
-    var hh = today.getHours();
-    var min = today.getMinutes();
-    var sec = today.getSeconds();
+    let today = new Date();
+    let todayPlus = moment();
+    let todayMinus = moment();
+    let dateAndtime = new Date();
+    let hh = today.getHours();
+    let min = today.getMinutes();
+    let sec = today.getSeconds();
 
-    var dd = today.getDate();
-    var mm = today.getMonth()+1; //January is 0!
-    var yyyy = today.getFullYear();
+    let dd = today.getDate();
+    let mm = today.getMonth()+1; //January is 0!
+    let yyyy = today.getFullYear();
 
         if(dd<10) {
             dd = '0'+dd
@@ -71,16 +71,16 @@ module.exports = function(app){
 
         dateAndtime = yyyy + '-' + mm + '-' + dd + ' ' + hh + ':' + min + ':' + sec;
         
-        //  var use for checking AM and PM
+        //  let use for checking AM and PM
         //  using momentjs 
-        var checker = moment(dateAndtime, "YYYY-MM-DD h:mm:ss");
-        var check_am_start = moment(today + " " + "06:30:00", "YYYY-MM-DD h:mm:ss");
-        var check_am_end = moment(today + " " + "18:29:59", "YYYY-MM-DD h:mm:ss");    
+        let checker = moment(dateAndtime, "YYYY-MM-DD h:mm:ss");
+        let check_am_start = moment(today + " " + "06:30:00", "YYYY-MM-DD h:mm:ss");
+        let check_am_end = moment(today + " " + "18:29:59", "YYYY-MM-DD h:mm:ss");    
         
-        var check_pm_start = moment(today + " " + "18:30:00", "YYYY-MM-DD h:mm:ss");
-        var check_notyet_midnight = moment(today + " " + "23:59:59", "YYYY-MM-DD h:mm:ss");   
-        var check_exact_midnight = moment(today + " " + "00:00:00", "YYYY-MM-DD h:mm:ss");    
-        var check_pm_end = moment(today + " " + "06:29:59", "YYYY-MM-DD h:mm:ss" );
+        let check_pm_start = moment(today + " " + "18:30:00", "YYYY-MM-DD h:mm:ss");
+        let check_notyet_midnight = moment(today + " " + "23:59:59", "YYYY-MM-DD h:mm:ss");   
+        let check_exact_midnight = moment(today + " " + "00:00:00", "YYYY-MM-DD h:mm:ss");    
+        let check_pm_end = moment(today + " " + "06:29:59", "YYYY-MM-DD h:mm:ss" );
 
     /*
     // api not yet needed
@@ -90,7 +90,7 @@ module.exports = function(app){
         //  get pool connection
         pool.getConnection(function(err, connection){
             //  parse the process input from the url
-            var process = req.params.process_id;
+            let process = req.params.process_id;
 
                 //  will check the AM and PM environment before running the query specifically for AM and PM shift
                 if (checker >= check_am_start && checker <= check_am_end) {
@@ -103,9 +103,9 @@ module.exports = function(app){
                     },  function (err, results, fields){
                         if (err) throw err;
 
-                            var obj = [];
+                            let obj = [];
 
-                                for (var i = 0; i < results.length; i++) {
+                                for (let i = 0; i < results.length; i++) {
                                     obj.push(
                                         {
                                             processName: results[i].process_id,
@@ -115,8 +115,8 @@ module.exports = function(app){
                                 }
 
                         //connection.release();
-                        var processOuts_json = JSON.stringify(obj);
-                        var processOuts_tsv = TSV.stringify(obj);
+                        let processOuts_json = JSON.stringify(obj);
+                        let processOuts_tsv = TSV.stringify(obj);
                        
 
                         fs.writeFile('./json/' + process + '_totalouts.json', processOuts_json, 'utf8', function(err){
@@ -142,9 +142,9 @@ module.exports = function(app){
                     },  function (err, results, fields){
                         if (err) throw err;
 
-                            var obj = [];
+                            let obj = [];
 
-                                for (var i = 0; i < results.length; i++) {
+                                for (let i = 0; i < results.length; i++) {
                                     obj.push(
                                         {
                                             processName: results[i].process_id,
@@ -169,10 +169,10 @@ module.exports = function(app){
     app.get('/hourly/:process_url', function(req, res){
         
         //  parse process url
-        var process = req.params.process_url;   
+        let process = req.params.process_url;   
         
             // promise 1
-            var hourlyTargetPromise = new Promise (function(resolve, reject){
+            let hourlyTargetPromise = new Promise (function(resolve, reject){
 
                 //  local database
                 poolLocal.getConnection(function(err, connection){
@@ -187,7 +187,7 @@ module.exports = function(app){
                                 },  function(err, results, fields){
                                     if (err) return reject(err);
 
-                                    var processTarget = [];
+                                    let processTarget = [];
                                         processTarget.push(
                                             results[0].t_target
                                         );                 
@@ -209,7 +209,7 @@ module.exports = function(app){
                                 },  function(err, results, fields){
                                     if (err) return reject(err);
 
-                                    var processTarget = [];
+                                    let processTarget = [];
                                         processTarget.push(
                                             results[0].t_target
                                         );                 
@@ -226,7 +226,7 @@ module.exports = function(app){
                                 },  function(err, results, fields){
                                     if (err) return reject(err);
 
-                                    var processTarget = [];
+                                    let processTarget = [];
                                         processTarget.push(
                                             results[0].t_target
                                         );                 
@@ -248,14 +248,14 @@ module.exports = function(app){
             });
         
             //  promise 2
-            var hourlyOutsPromise = new Promise (function(resolve, reject){
+            let hourlyOutsPromise = new Promise (function(resolve, reject){
                 
                 //if (err) return reject(err);
                 csv.parseCSV('./public/outs/process_outs.csv', function(data){
                     
-                    var processOuts = [];
+                    let processOuts = [];
 
-                    for(i=0; i<data.length; i++){
+                    for(let i=0; i<data.length; i++){
                         if(data[i].process_id === process.toUpperCase()){
                             processOuts.push(
                                 
@@ -277,8 +277,8 @@ module.exports = function(app){
         // aggregate multiple promises 
         Promise.all([hourlyTargetPromise, hourlyOutsPromise]).then(function(values){
 
-           var process = req.params.process_url;    //  path
-           var data = values;         //    to variable
+           let process = req.params.process_url;    //  path
+           let data = values;         //    to variable
 
            console.log(data);
 
@@ -317,7 +317,7 @@ module.exports = function(app){
                         } else {
                            
                             var variance = 0;
-                           // var variance = (data[0]['processTarget'][0] - data[1]['processOuts'][0]).toLocaleString(undefined, {maximumFractionDigits: 0});
+                           // let variance = (data[0]['processTarget'][0] - data[1]['processOuts'][0]).toLocaleString(undefined, {maximumFractionDigits: 0});
                         }
                     
                                 
@@ -383,7 +383,7 @@ module.exports = function(app){
                         }, function(err, results, fields){
                             if (err) throw err;
 
-                            var obj = [];
+                            let obj = [];
 
                                     obj.push(
                                         {   
@@ -453,7 +453,7 @@ module.exports = function(app){
                                     );
                             
                             // stringify obj to TSV
-                            // var processHourly_tsv = TSV.stringify(obj);
+                            // let processHourly_tsv = TSV.stringify(obj);
 
                             //  create .tsv per request
                             //fs.writeFile('./public/' + process + '.tsv', processHourly_tsv, 'utf8', function(err){
@@ -462,14 +462,14 @@ module.exports = function(app){
 
 
                             //  json2csv 
-                            var fields = ['hours', 'outs', 'dppm'];
-                            var gg = {
+                            let fields = ['hours', 'outs', 'dppm'];
+                            let gg = {
                                 data: obj,
                                 fields: fields,
                                 quotes: ''
                             };
                             
-                            var processHourly_csv = json2csv(gg);
+                            let processHourly_csv = json2csv(gg);
                             console.log(processHourly_csv);
                             //  create .csv 
                             fs.writeFile('./public/' + process + '.csv', processHourly_csv, function(err){
@@ -495,7 +495,7 @@ module.exports = function(app){
                                 values: [process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process]
                             },  function(err, results, fields){
                                 
-                                    var obj = [];
+                                    let obj = [];
 
                                         obj.push(
                                             {   
@@ -566,14 +566,14 @@ module.exports = function(app){
                                 
                                 
                                 //  json2csv 
-                                var fields = ['hours', 'outs', 'dppm'];
-                                var gg = {
+                                let fields = ['hours', 'outs', 'dppm'];
+                                let gg = {
                                     data: obj,
                                     fields: fields,
                                     quotes: ''
                                 };
                                 
-                                var processHourly_csv = json2csv(gg);
+                                let processHourly_csv = json2csv(gg);
                                 console.log(processHourly_csv);
                                 //  create .csv 
                                 fs.writeFile('./public/' + process + '.csv', processHourly_csv, function(err){
@@ -594,7 +594,7 @@ module.exports = function(app){
                              values : [process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process, process]
                          }, function(err, results, fields){
 
-                                var obj = [];
+                                let obj = [];
 
                                         obj.push(
                                             {   
@@ -664,14 +664,14 @@ module.exports = function(app){
                                         );
                                 
                                 //  json2csv 
-                                var fields = ['hours', 'outs', 'dppm'];
-                                var gg = {
+                                let fields = ['hours', 'outs', 'dppm'];
+                                let gg = {
                                     data: obj,
                                     fields: fields,
                                     quotes: ''
                                 };
                                 
-                                var processHourly_csv = json2csv(gg);
+                                let processHourly_csv = json2csv(gg);
                                 console.log(processHourly_csv);
                                 //  create .csv 
                                 fs.writeFile('./public/' + process + '.csv', processHourly_csv, function(err){
@@ -705,9 +705,9 @@ module.exports = function(app){
             },  function(err, results, fields){
                 if (err) throw err;
                 
-                    var obj = [];
+                    let obj = [];
                     
-                        for(i = 0; i < results.length; i++){
+                        for( let i = 0; i < results.length; i++){
                             obj.push({
 
                                 process_id:     results[i].process_id,
@@ -755,7 +755,7 @@ module.exports = function(app){
                 endTime = new Date(req.body.end_time);
 
                 //  for target data, compute details
-                var computedTarget = Math.round((req.body.uph * (req.body.num_tool - req.body.toolpm)) * (req.body.oee/100)) || 0;
+                let computedTarget = Math.round((req.body.uph * (req.body.num_tool - req.body.toolpm)) * (req.body.oee/100)) || 0;
 
 
                 connection.query({
@@ -868,9 +868,9 @@ module.exports = function(app){
             },  function(err, results, fields){
                 if (err) throw err;
 
-                    var obj = [];
+                    let obj = [];
 
-                    for(i=0; i < results.length; i++){
+                    for(let i=0; i < results.length; i++){
 
                         obj.push({
 
@@ -946,10 +946,10 @@ module.exports = function(app){
             }, function(err, results, fields){
                 if (err) throw err;
 
-                    var obj = [];
+                    let obj = [];
                     
 
-                    for(i = 0; i< results.length; i++){
+                    for(let i = 0; i< results.length; i++){
                             
                                 obj.push({
                                     process_id: results[i].process_id,
@@ -959,7 +959,7 @@ module.exports = function(app){
                             
                     };
 
-                    var GG = {process: obj};
+                    let GG = {process: obj};
                 
                 res.send(GG);
 
@@ -971,13 +971,13 @@ module.exports = function(app){
 
     app.get('/gg/:process_url', function(req, res){
 
-        var process = req.params.process_url;
+        let process = req.params.process_url;
                 
             csv.parseCSV('./public/outs/process_outs.csv', function(data){
                 
-                var processOuts = [];
+                let processOuts = [];
 
-                for(i=0; i<data.length; i++){
+                for(let i=0; i<data.length; i++){
                     if(data[i].process_id === process.toUpperCase()){
                         processOuts.push(
                             data[i].totalOuts

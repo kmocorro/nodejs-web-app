@@ -1,3 +1,5 @@
+SET time_zone = '+8:00';
+
 INSERT INTO tbl_target_input (process_id, today_date, stime, ntime, toolpm, remarks) VALUES 
 ('101', CURDATE(), '06:30:00', '06:40:00', '0', '--'),
 ('101', CURDATE(), '06:40:00', '06:50:00', '0', '--'),

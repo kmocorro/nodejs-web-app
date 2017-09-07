@@ -7,7 +7,7 @@ SELECT A.hours as hours,
 FROM
 
 (SELECT 
-			CONCAT(CURDATE(), ' 18:30') as hours, SUM(A.out_qty) AS outs
+			CONCAT(CURDATE() - INTERVAL 1 DAY, ' 18:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A 
 		WHERE
@@ -17,7 +17,7 @@ FROM
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 19:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 19:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 19:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A 
 		WHERE
@@ -26,7 +26,7 @@ FROM
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 20:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 20:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 20:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
@@ -35,7 +35,7 @@ FROM
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 21:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 21:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 21:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
@@ -44,7 +44,7 @@ FROM
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 22:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 22:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 22:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
@@ -53,7 +53,7 @@ FROM
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 23:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 23:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 23:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
@@ -118,7 +118,7 @@ FROM
 JOIN
 
     (SELECT 
-			CONCAT(CURDATE(), ' 18:30') as hours, SUM(A.scrap_qty) AS scraps
+			CONCAT(CURDATE() - INTERVAL 1 DAY, ' 18:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A 
 		WHERE
@@ -128,7 +128,7 @@ JOIN
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 19:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 19:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 19:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A 
 		WHERE
@@ -137,7 +137,7 @@ JOIN
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 20:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 20:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 20:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
@@ -146,7 +146,7 @@ JOIN
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 21:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 21:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 21:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
@@ -155,7 +155,7 @@ JOIN
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 22:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 22:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 22:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
@@ -164,7 +164,7 @@ JOIN
 				&& A.date_time <= CONCAT(CURDATE() - INTERVAL 1 DAY, ' 23:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 23:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() - INTERVAL 1 DAY, ' 23:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE

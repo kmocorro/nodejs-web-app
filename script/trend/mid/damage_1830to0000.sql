@@ -11,7 +11,7 @@ FROM
 		FROM
 			MES_OUT_DETAILS A 
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 
 			AND A.date_time >= CONCAT(CURDATE(), ' 18:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 19:29:59')
@@ -21,7 +21,7 @@ FROM
 		FROM
 			MES_OUT_DETAILS A 
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 19:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 20:29:59')
 			UNION ALL
@@ -30,7 +30,7 @@ FROM
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 20:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 21:29:59')
 			UNION ALL
@@ -39,7 +39,7 @@ FROM
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 21:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 22:29:59')
 			UNION ALL
@@ -48,7 +48,7 @@ FROM
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 22:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 23:29:59')
 			UNION ALL
@@ -57,62 +57,62 @@ FROM
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 23:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 00:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 00:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 00:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 00:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 00:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 01:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 01:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 01:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 01:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 01:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 02:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 02:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 02:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 02:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 02:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 03:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 03:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 03:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 03:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 03:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 04:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 04:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 04:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 04:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 04:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 05:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 05:30') as hours, SUM(A.out_qty) AS outs
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 05:30') as hours, SUM(A.out_qty) AS outs
 		FROM
 			MES_OUT_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 05:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 05:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 06:29:59')) A
                 
 JOIN
@@ -122,7 +122,7 @@ JOIN
 		FROM
 			MES_SCRAP_DETAILS A 
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 
 			AND A.date_time >= CONCAT(CURDATE(), ' 18:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 19:29:59')
@@ -132,7 +132,7 @@ JOIN
 		FROM
 			MES_SCRAP_DETAILS A 
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 19:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 20:29:59')
 			UNION ALL
@@ -141,7 +141,7 @@ JOIN
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 20:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 21:29:59')
 			UNION ALL
@@ -150,7 +150,7 @@ JOIN
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 21:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 22:29:59')
 			UNION ALL
@@ -159,7 +159,7 @@ JOIN
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 22:30:00')
 				&& A.date_time <= CONCAT(CURDATE(), ' 23:29:59')
 			UNION ALL
@@ -168,62 +168,62 @@ JOIN
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
+			A.process_id = "ARC_BARC"
 				AND A.date_time >= CONCAT(CURDATE(), ' 23:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 00:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 00:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 00:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 00:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 00:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 01:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 01:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 01:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 01:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 01:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 02:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 02:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 02:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 02:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 02:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 03:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 03:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 03:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 03:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 03:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 04:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 04:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 04:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 04:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 04:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 05:29:59')
 			UNION ALL
 	SELECT 
-		   CONCAT(CURDATE(), ' 05:30') as hours, SUM(A.scrap_qty) AS scraps
+		   CONCAT(CURDATE() + INTERVAL 1 DAY, ' 05:30') as hours, SUM(A.scrap_qty) AS scraps
 		FROM
 			MES_SCRAP_DETAILS A
 		WHERE
-			A.process_id = "DAMAGE"
-				AND A.date_time >= CONCAT(CURDATE(), ' 05:30:00')
+			A.process_id = "ARC_BARC"
+				AND A.date_time >= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 05:30:00')
 				&& A.date_time <= CONCAT(CURDATE() + INTERVAL 1 DAY, ' 06:29:59')) B
                 
     

@@ -3,7 +3,7 @@
 # KEVIN B MOCORRO
 # Version 1.0
 
-cd /c/sandbox/nodejs-web-app/script
+cd /c/sandbox/nodejs-web-app/script/target
 PATH=$PATH:/c/xampp/mysql/bin
 
  # Will insert target every morning
